@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title != null ? title + ' - RollerSpeed' : 'RollerSpeed - Escuela de Patinaje'}">RollerSpeed</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --accent-color: #45b7d1;
+            --dark-color: #2d3436;
+            --light-color: #ddd;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--primary-color) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #ff5252;
+            border-color: #ff5252;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 100px 0;
+        }
+
+        .card {
+            transition: transform 0.3s ease-in-out;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 40px 0 20px 0;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .alert {
+            border-radius: 10px;
+        }
+
+        .nivel-badge {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.8rem;
+        }
+
+        .sidebar {
+            background-color: #f8f9fa;
+            min-height: calc(100vh - 56px);
+        }
+
+        .sidebar .nav-link {
+            color: var(--dark-color);
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.2rem;
+            border-radius: 0.5rem;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegación -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="fas fa-skating"></i> RollerSpeed
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/sobre-nosotros}">Sobre Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/servicios}">Servicios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/galeria}">Galería</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/noticias}">Noticias</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/contacto}">Contacto</a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" th:href="@{/login}">
+                            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="btn btn-primary btn-sm" th:href="@{/registro}">
+                            <i class="fas fa-user-plus"></i> Registrarse
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> <span sec:authentication="name"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/dashboard}">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a></li>
+                            <li><a class="dropdown-item" th:href="@{/perfil}">
+                                <i class="fas fa-user-edit"></i> Mi Perfil
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" style="display: inline;">
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Alertas -->
+    <div class="container mt-3" th:if="${not #strings.isEmpty(mensaje)} or ${not #strings.isEmpty(error)}">
+        <div class="alert alert-success alert-dismissible fade show" th:if="${not #strings.isEmpty(mensaje)}">
+            <i class="fas fa-check-circle"></i> <span th:text="${mensaje}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div class="alert alert-danger alert-dismissible fade show" th:if="${not #strings.isEmpty(error)}">
+            <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <main th:fragment="content">
+        <!-- El contenido específico de cada página se insertará aquí -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-skating"></i> RollerSpeed</h5>
+                    <p>La mejor escuela de patinaje de la ciudad. Formando campeones desde hace más de 10 años.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contacto</h5>
+                    <p><i class="fas fa-map-marker-alt"></i> Calle 123 #45-67, Santa Marta, Colombia</p>
+                    <p><i class="fas fa-phone"></i> +57 300 123 4567</p>
+                    <p><i class="fas fa-envelope"></i> info@rollerspeed.com</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Horarios</h5>
+                    <p><strong>Lunes - Viernes:</strong> 6:00 AM - 10:00 PM</p>
+                    <p><strong>Sábados:</strong> 7:00 AM - 8:00 PM</p>
+                    <p><strong>Domingos:</strong> 8:00 AM - 6:00 PM</p>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p>&copy; 2025 RollerSpeed. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                if (alert.classList.contains('show')) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

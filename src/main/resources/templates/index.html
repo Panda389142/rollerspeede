@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: html}">
+<body>
+    <main th:fragment="content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container text-center">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <h1 class="display-4 fw-bold mb-4">
+                            ¡Aprende a Patinar como un Profesional!
+                        </h1>
+                        <p class="lead mb-4">
+                            En RollerSpeed ofrecemos clases de patinaje para todas las edades y niveles. 
+                            Desde principiantes hasta competidores avanzados.
+                        </p>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a th:href="@{/registro}" class="btn btn-light btn-lg me-md-2">
+                                <i class="fas fa-user-plus"></i> ¡Inscríbete Ahora!
+                            </a>
+                            <a th:href="@{/servicios}" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-info-circle"></i> Conoce Nuestros Servicios
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <img src="/images/hero-skater.jpg" alt="Patinador profesional" class="img-fluid rounded" 
+                             style="max-height: 400px; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Características Destacadas -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row text-center mb-5">
+                    <div class="col-12">
+                        <h2 class="fw-bold">¿Por qué elegir RollerSpeed?</h2>
+                        <p class="lead text-muted">Somos la escuela de patinaje líder en Santa Marta</p>
+                    </div>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-primary mb-3">
+                                    <i class="fas fa-medal"></i>
+                                </div>
+                                <h5 class="card-title">Instructores Certificados</h5>
+                                <p class="card-text">
+                                    Nuestros instructores son patinadores profesionales con años de experiencia 
+                                    en competencias nacionales e internacionales.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-success mb-3">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h5 class="card-title">Clases Personalizadas</h5>
+                                <p class="card-text">
+                                    Ofrecemos diferentes niveles de entrenamiento adaptados a la edad, 
+                                    habilidad y objetivos de cada estudiante.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-warning mb-3">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <h5 class="card-title">Preparación Competitiva</h5>
+                                <p class="card-text">
+                                    Preparamos a nuestros estudiantes para competencias locales, 
+                                    regionales y nacionales de patinaje artístico y de velocidad.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Clases Disponibles -->
+        <section class="py-5 bg-light">
+            <div class="container">
+                <div class="row mb-5">
+                    <div class="col-12 text-center">
+                        <h2 class="fw-bold">Nuestras Clases</h2>
+                        <p class="lead text-muted">Encuentra la clase perfecta para ti</p>
+                    </div>
+                </div>
+                
+                <div class="row g-4" th:if="${clases != null and not #lists.isEmpty(clases)}">
+                    <div class="col-lg-4 col-md-6" th:each="clase : ${clases}">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="card-title" th:text="${clase.nombre}">Nombre de la Clase</h5>
+                                    <span class="badge nivel-badge" 
+                                          th:classappend="${clase.nivel.name() == 'PRINCIPIANTE'} ? 'bg-success' : 
+                                                          ${clase.nivel.name() == 'INTERMEDIO'} ? 'bg-warning' : 
+                                                          ${clase.nivel.name() == 'AVANZADO'} ? 'bg-danger' : 'bg-dark'"
+                                          th:text="${clase.nivel.descripcion}">
+                                        Nivel
+                                    </span>
+                                </div>
+                                
+                                <p class="card-text" th:text="${clase.descripcion}">Descripción de la clase</p>
+                                
+                                <div class="mb-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar-day"></i> 
+                                        <span th:text="${clase.diaSemana}">Día</span>
+                                    </small>
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock"></i>
+                                        <span th:text="${clase.horaInicio}">Hora inicio</span> - 
+                                        <span th:text="${clase.horaFin}">Hora fin</span>
+                                    </small>
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-user-friends"></i>
+                                        Cupos disponibles: <span th:text="${clase.cuposDisponibles}">0</span>
+                                    </small>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted" th:if="${clase.instructor != null}">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                        <span th:text="${clase.instructor.nombre}">Instructor</span>
+                                    </small>
+                                    
+                                    <div>
+                                        <button class="btn btn-primary btn-sm" 
+                                                th:if="${clase.tieneCupo()}"
+                                                onclick="inscribirClase([[${clase.id}]])">
+                                            <i class="fas fa-plus"></i> Inscribirse
+                                        </button>
+                                        <span class="badge bg-secondary" th:unless="${clase.tieneCupo()}">
+                                            Sin cupos
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center" th:if="${clases == null or #lists.isEmpty(clases)}">
+                    <p class="lead text-muted">Próximamente tendremos nuevas clases disponibles.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonios -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row mb-5">
+                    <div class="col-12 text-center">
+                        <h2 class="fw-bold">Lo que dicen nuestros estudiantes</h2>
+                    </div>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <img src="/images/testimonial-1.jpg" alt="Estudiante" 
+                                         class="rounded-circle" width="80" height="80">
+                                </div>
+                                <blockquote class="blockquote">
+                                    <p>"RollerSpeed cambió mi vida. Llegué sin saber patinar y ahora compito a nivel nacional. 
+                                       Los instructores son excepcionales."</p>
+                                </blockquote>
+                                <footer class="blockquote-footer">
+                                    María González, <cite title="Estudiante">Estudiante Avanzada</cite>
+                                </footer>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <img src="/images/testimonial-2.jpg" alt="Padre de familia" 
+                                         class="rounded-circle" width="80" height="80">
+                                </div>
+                                <blockquote class="blockquote">
+                                    <p>"Mi hijo encontró su pasión aquí. El ambiente es familiar y seguro. 
+                                       Recomiendo RollerSpeed a todos los padres."</p>
+                                </blockquote>
+                                <footer class="blockquote-footer">
+                                    Carlos Mendoza, <cite title="Padre">Padre de Familia</cite>
+                                </footer>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <img src="/images/testimonial-3.jpg" alt="Estudiante adulta" 
+                                         class="rounded-circle" width="80" height="80">
+                                </div>
+                                <blockquote class="blockquote">
+                                    <p>"Nunca es tarde para aprender. A los 35 años decidí patinar y ha sido 
+                                       una experiencia increíble. ¡Altamente recomendado!"</p>
+                                </blockquote>
+                                <footer class="blockquote-footer">
+                                    Ana Patricia Ruiz, <cite title="Estudiante">Estudiante Adulta</cite>
+                                </footer>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="py-5 bg-primary text-white">
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="fw-bold mb-3">¿Listo para comenzar tu aventura sobre ruedas?</h2>
+                        <p class="lead mb-4">
+                            Únete a nuestra comunidad de patinadores y descubre todo tu potencial.
+                        </p>
+                        <a th:href="@{/registro}" class="btn btn-light btn-lg">
+                            <i class="fas fa-rocket"></i> ¡Comienza Hoy!
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function inscribirClase(claseId) {
+            // Verificar si el usuario está autenticado
+            if (!document.querySelector('[sec\\:authorize="isAuthenticated()"]')) {
+                alert('Debes iniciar sesión para inscribirte a una clase.');
+                window.location.href = '/login';
+                return;
+            }
+            
+            fetch('/inscribir-clase/' + claseId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(result => {
+                if (result === 'success') {
+                    alert('¡Te has inscrito exitosamente a la clase!');
+                    location.reload();
+                } else {
+                    alert('Error al inscribirse. La clase puede estar llena o ya estar inscrito.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error de conexión. Intenta nuevamente.');
+            });
+        }
+    </script>
+</body>
+</html>

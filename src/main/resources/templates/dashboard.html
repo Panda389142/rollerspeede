@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" 
+      th:replace="~{layout :: html}">
+<head>
+    <title>Dashboard - RollerSpeed</title>
+</head>
+<body>
+    <main th:fragment="content">
+        <div class="container-fluid py-4">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-md-3 col-lg-2">
+                    <div class="sidebar p-3">
+                        <div class="text-center mb-4">
+                            <img src="/images/user-avatar.png" alt="Avatar" class="rounded-circle mb-2" 
+                                 width="80" height="80">
+                            <h6 th:text="${usuario?.nombre}">Usuario</h6>
+                            <small class="text-muted" th:text="${usuario?.rol}">Rol</small>
+                        </div>
+                        
+                        <nav class="nav flex-column">
+                            <a class="nav-link active" href="#overview">
+                                <i class="fas fa-tachometer-alt"></i> Resumen
+                            </a>
+                            
+                            <!-- Enlaces para Alumnos -->
+                            <div sec:authorize="hasRole('ALUMNO')">
+                                <a class="nav-link" href="#mis-clases">
+                                    <i class="fas fa-calendar"></i> Mis Clases
+                                </a>
+                                <a class="nav-link" href="#inscripciones">
+                                    <i class="fas fa-plus-circle"></i> Inscribirse
+                                </a>
+                                <a class="nav-link" href="#progreso">
+                                    <i class="fas fa-chart-line"></i> Mi Progreso
+                                </a>
+                            </div>
+                            
+                            <!-- Enlaces para Instructores -->
+                            <div sec:authorize="hasRole('INSTRUCTOR')">
+                                <a class="nav-link" href="#clases-instructor">
+                                    <i class="fas fa-chalkboard-teacher"></i> Mis Clases
+                                </a>
+                                <a class="nav-link" href="#asistencia">
+                                    <i class="fas fa-clipboard-check"></i> Asistencia
+                                </a>
+                                <a class="nav-link" href="#alumnos">
+                                    <i class="fas fa-users"></i> Mis Alumnos
+                                </a>
+                            </div>
+                            
+                            <!-- Enlaces para Administradores -->
+                            <div sec:authorize="hasRole('ADMINISTRADOR')">
+                                <a class="nav-link" href="#gestion-usuarios">
+                                    <i class="fas fa-users-cog"></i> Gestión Usuarios
+                                </a>
+                                <a class="nav-link" href="#gestion-clases">
+                                    <i class="fas fa-calendar-plus"></i> Gestión Clases
+                                </a>
+                                <a class="nav-link" href="#reportes">
+                                    <i class="fas fa-chart-bar"></i> Reportes
+                                </a>
+                            </div>
+                            
+                            <hr>
+                            <a class="nav-link" th:href="@{/perfil}">
+                                <i class="fas fa-user-edit"></i> Mi Perfil
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Contenido Principal -->
+                <div class="col-md-9 col-lg-10">
+                    <!-- Header del Dashboard -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1 class="h3">
+                            <span sec:authorize="hasRole('ALUMNO')">Dashboard del Alumno</span>
+                            <span sec:authorize="hasRole('INSTRUCTOR')">Dashboard del Instructor</span>
+                            <span sec:authorize="hasRole('ADMINISTRADOR')">Dashboard de Administración</span>
+                        </h1>
+                        <div class="text-muted">
+                            <i class="fas fa-calendar-day"></i>
+                            <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy')}">Fecha</span>
+                        </div>
+                    </div>
+
+                    <!-- Resumen General -->
+                    <div id="overview">
+                        <!-- Cards de Estadísticas -->
+                        <div class="row g-4 mb-4">
+                            <!-- Para Administradores -->
+                            <div sec:authorize="hasRole('ADMINISTRADOR')">
+                                <div class="col-md-3">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4 th:text="${totalAlumnos}">0</h4>
+                                                    <p class="mb-0">Alumnos Activos</p>
+                                                </div>
+                                                <i class="fas fa-users fa-2x opacity-75"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4 th:text="${totalInstructores}">0</h4>
+                                                    <p class="mb-0">Instructores</p>
+                                                </div>
+                                                <i class="fas fa-chalkboard-teacher fa-2x opacity-75"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <div class="card bg-info text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4 th:text="${totalClases}">0</h4>
+                                                    <p class="mb-0">Clases Activas</p>
+                                                </div>
+                                                <i class="fas fa-calendar-alt fa-2x opacity-75"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <div class="card bg-warning text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4>12</h4>
+                                                    <p class="mb-0">Eventos Este Mes</p>
+                                                </div>
+                                                <i class="fas fa-star fa-2x opacity-75"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Para Alumnos -->
+                            <div sec:authorize="hasRole('ALUMNO')">
+                                <div class="col-md-4">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4 th:text="${#lists.size(misClases ?: {})}">0</h4>
+                                                    <p class="mb-0">Clases Inscritas</p>
+                                                </div>
+                                                <i class="fas fa-calendar-check fa-2x opacity-75"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4>85%</h4>
+                                                    <p class="mb-0">Asistencia</p>
+                                                </div>
+                                                <i class="fas fa-chart-line fa-2x opacity-75"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="card bg-info text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4 th:text="${#lists.size(clasesDisponibles ?: {})}">0</h4>
+                                                    <p class="mb-0">Clases Disponibles</p>
+                                                </div>
+                                                <i class="fas fa-plus-circle fa-2x opacity-75"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Para Instructores -->
+                            <div sec:authorize="hasRole('INSTRUCTOR')">
+                                <div class="col-md-4">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4 th:text="${#lists.size(misClases ?: {})}">0</h4>
+                                                    <p class="mb-0">Clases Asignadas</p>
+                                                </div>
+                                                <i class="fas fa-chalkboard-teacher fa-2x opacity-75"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4>24</h4>
+                                                    <p class="mb-0">Alumnos Totales</p>
+                                                </div>
+                                                <i class="fas fa-users fa-2x opacity-75"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="card bg-warning text-white">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4>18</h4>
+                                                    <p class="mb-0">Clases Esta Semana</p>
+                                                </div>
+                                                <i class="fas fa-calendar-week fa-2x opacity-75"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contenido Específico por Rol -->
+                        
+                        <!-- Dashboard del Alumno -->
+                        <div sec:authorize="hasRole('ALUMNO')">
+                            <!-- Mis Clases -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5><i class="fas fa-calendar"></i> Mis Clases</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div th:if="${misClases != null and not #lists.isEmpty(misClases)}">
+                                                <div class="list-group list-group-flush">
+                                                    <div class="list-group-item" th:each="clase : ${misClases}">
+                                                        <div class="d-flex justify-content-between align-items-start">
+                                                            <div>
+                                                                <h6 class="mb-1" th:text="${clase.nombre}">Clase</h6>
+                                                                <p class="mb-1">
+                                                                    <small class="text-muted">
+                                                    <span th:text="${clase.diaSemana}">Día</span> - 
+                                                    <span th:text="${clase.horaInicio}">Hora</span>
+                                                </small>
+                                            </div>
+                                            <button class="btn btn-sm btn-outline-primary" 
+                                                    th:onclick="'inscribirClase(' + ${clase.id} + ')'">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a th:href="@{/servicios}" class="btn btn-outline-primary btn-sm">
+                                        Ver Todas las Clases
+                                    </a>
+                                </div>
+                            </div>
+                            <div th:if="${clasesDisponibles == null or #lists.isEmpty(clasesDisponibles)}">
+                                <p class="text-muted text-center">No hay clases disponibles en este momento.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard del Instructor -->
+            <div sec:authorize="hasRole('INSTRUCTOR')">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-chalkboard-teacher"></i> Mis Clases Asignadas</h5>
+                            </div>
+                            <div class="card-body">
+                                <div th:if="${misClases != null and not #lists.isEmpty(misClases)}">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Clase</th>
+                                                    <th>Nivel</th>
+                                                    <th>Día</th>
+                                                    <th>Horario</th>
+                                                    <th>Alumnos</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="clase : ${misClases}">
+                                                    <td th:text="${clase.nombre}">Nombre</td>
+                                                    <td>
+                                                        <span class="badge bg-info" th:text="${clase.nivel.descripcion}">Nivel</span>
+                                                    </td>
+                                                    <td th:text="${clase.diaSemana}">Día</td>
+                                                    <td>
+                                                        <span th:text="${clase.horaInicio}">Inicio</span> - 
+                                                        <span th:text="${clase.horaFin}">Fin</span>
+                                                    </td>
+                                                    <td>
+                                                        <span th:text="${#lists.size(clase.alumnos)}">0</span> / 
+                                                        <span th:text="${clase.capacidadMaxima}">0</span>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-primary" 
+                                                                                                                        th:onclick="'verAlumnos(' + ${clase.id} + ')'">
+                                                                                                                    <i class="fas fa-users"></i> Ver Alumnos
+                                                                                                                </button>
+                                                        <button class="btn btn-sm btn-success" 
+                                                                th:onclick="'registrarAsistencia(' + ${clase.id} + ')'">
+                                                            <i class="fas fa-clipboard-check"></i> Asistencia
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div th:if="${misClases == null or #lists.isEmpty(misClases)}">
+                                    <p class="text-muted text-center">No tienes clases asignadas.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard del Administrador -->
+            <div sec:authorize="hasRole('ADMINISTRADOR')">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-chart-bar"></i> Estadísticas Generales</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="statsChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-bell"></i> Notificaciones</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h6 class="mb-1">Nuevo alumno registrado</h6>
+                                                <p class="mb-1">Juan Pérez se registró hoy</p>
+                                                <small>Hace 2 horas</small>
+                                            </div>
+                                            <span class="badge bg-success">Nuevo</span>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h6 class="mb-1">Clase con cupo completo</h6>
+                                                <p class="mb-1">Patinaje Avanzado - Lunes</p>
+                                                <small>Hace 1 día</small>
+                                            </div>
+                                            <span class="badge bg-warning">Atención</span>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h6 class="mb-1">Pago pendiente</h6>
+                                                <p class="mb-1">5 alumnos con pagos pendientes</p>
+                                                <small>Hace 2 días</small>
+                                            </div>
+                                            <span class="badge bg-danger">Urgente</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5><i class="fas fa-tasks"></i> Acciones Rápidas</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <button class="btn btn-primary w-100" onclick="crearUsuario()">
+                                            <i class="fas fa-user-plus"></i><br>
+                                            <small>Crear Usuario</small>
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-success w-100" onclick="crearClase()">
+                                            <i class="fas fa-calendar-plus"></i><br>
+                                            <small>Nueva Clase</small>
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-info w-100" onclick="generarReporte()">
+                                            <i class="fas fa-file-alt"></i><br>
+                                            <small>Generar Reporte</small>
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-warning w-100" onclick="configurarSistema()">
+                                            <i class="fas fa-cogs"></i><br>
+                                            <small>Configuración</small>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Próximas Clases (Para todos los roles) -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-calendar-day"></i> Próximas Clases de Hoy</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card border-start border-primary border-4">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Patinaje Principiante</h6>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock"></i> 10:00 AM - 11:30 AM<br>
+                                                <i class="fas fa-users"></i> 12 alumnos
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-start border-success border-4">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Patinaje Intermedio</h6>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock"></i> 2:00 PM - 3:30 PM<br>
+                                                <i class="fas fa-users"></i> 8 alumnos
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-start border-warning border-4">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Patinaje Competitivo</h6>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock"></i> 6:00 PM - 8:00 PM<br>
+                                                <i class="fas fa-users"></i> 6 alumnos
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+
+<script>
+// Función para inscribirse a una clase
+function inscribirClase(claseId) {
+    fetch('/inscribir-clase/' + claseId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.text())
+    .then(result => {
+        if (result === 'success') {
+            alert('¡Te has inscrito exitosamente a la clase!');
+            location.reload();
+        } else {
+            alert('Error al inscribirse. La clase puede estar llena o ya estar inscrito.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error de conexión. Intenta nuevamente.');
+    });
+}
+
+// Funciones para instructores
+function verAlumnos(claseId) {
+    window.location.href = '/instructor/clase/' + claseId + '/alumnos';
+}
+
+function registrarAsistencia(claseId) {
+    window.location.href = '/instructor/clase/' + claseId + '/asistencia';
+}
+
+// Funciones para administradores
+function crearUsuario() {
+    window.location.href = '/admin/usuarios/crear';
+}
+
+function crearClase() {
+    window.location.href = '/admin/clases/crear';
+}
+
+function generarReporte() {
+    window.location.href = '/admin/reportes';
+}
+
+function configurarSistema() {
+    window.location.href = '/admin/configuracion';
+}
+
+// Navegación del sidebar
+document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        if (this.getAttribute('href').startsWith('#')) {
+            e.preventDefault();
+            // Remove active class from all links
+            document.querySelectorAll('.sidebar .nav-link').forEach(l => l.classList.remove('active'));
+            // Add active class to clicked link
+            this.classList.add('active');
+            
+            // Show/hide content sections (implementation would depend on specific needs)
+            const targetSection = this.getAttribute('href').substring(1);
+            console.log('Navigating to section:', targetSection);
+        }
+    });
+});
+
+// Chart para administradores (usando Chart.js si está disponible)
+if (document.getElementById('statsChart')) {
+    // Implementar gráfico de estadísticas
+    const ctx = document.getElementById('statsChart').getContext('2d');
+    
+    // Datos de ejemplo
+    const chartData = {
+        labels: ['Alumnos', 'Instructores', 'Clases', 'Asistencias'],
+        datasets: [{
+            label: 'Estadísticas',
+            data: [45, 8, 12, 320],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 205, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)'
+            ]
+        }]
+    };
+    
+    // Crear gráfico simple con Canvas API si Chart.js no está disponible
+    ctx.fillStyle = '#007bff';
+    ctx.fillRect(10, 10, 100, 50);
+    ctx.fillStyle = '#28a745';
+    ctx.fillRect(120, 10, 80, 50);
+    ctx.fillStyle = '#ffc107';
+    ctx.fillRect(210, 10, 60, 50);
+    ctx.fillStyle = '#17a2b8';
+    ctx.fillRect(280, 10, 120, 50);
+    
+    // Etiquetas
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.fillText('Alumnos: 45', 10, 80);
+    ctx.fillText('Instructores: 8', 120, 80);
+    ctx.fillText('Clases: 12', 210, 80);
+    ctx.fillText('Asistencias: 320', 280, 80);
+}
+</script>
+</body>
+</html>>
+                                                                        <i class="fas fa-calendar-day"></i> 
+                                                                        <span th:text="${clase.diaSemana}">Día</span>
+                                                                    </small>
+                                                                </p>
+                                                                <small class="text-muted">
+                                                                    <i class="fas fa-clock"></i>
+                                                                    <span th:text="${clase.horaInicio}">Hora</span> - 
+                                                                    <span th:text="${clase.horaFin}">Hora</span>
+                                                                </small>
+                                                            </div>
+                                                            <span class="badge bg-primary" th:text="${clase.nivel.descripcion}">Nivel</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div th:if="${misClases == null or #lists.isEmpty(misClases)}">
+                                                <p class="text-muted text-center">No tienes clases inscritas aún.</p>
+                                                <div class="text-center">
+                                                    <a href="#inscripciones" class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-plus"></i> Inscribirse a una Clase
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5><i class="fas fa-plus-circle"></i> Clases Disponibles</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div th:if="${clasesDisponibles != null and not #lists.isEmpty(clasesDisponibles)}">
+                                                <div class="list-group list-group-flush">
+                                                    <div class="list-group-item" th:each="clase : ${#lists.size(clasesDisponibles) > 3 ? clasesDisponibles.subList(0, 3) : clasesDisponibles}">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div>
+                                                                <h6 class="mb-1" th:text="${clase.nombre}">Clase</h6>
+                                                                <small class="text-muted"
