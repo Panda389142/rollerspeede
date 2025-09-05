@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}"> 
+<html lang="es" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" 
+      th:replace="~{layout :: html}">
 <head>
     <title>Dashboard - RollerSpeed</title>
 </head>
 <body>
-    <main layout:fragment="content">
+    <main th:fragment="content">
         <div class="container-fluid py-4">
             <div class="row">
                 <!-- Sidebar -->
@@ -171,8 +170,8 @@
                                                                             <span th:text="${clase.diaSemana}">Día</span> -
                                                                             <span th:text="${clase.horaInicio}">Hora</span>
                                                                         </small>
-                                                                    </p>
-                                                                </div> <button class="btn btn-sm btn-outline-danger"
+                                                                    </p> </div>
+                                                                <button class="btn btn-sm btn-outline-danger"
                                                                         th:onclick="'cancelarInscripcion(' + ${clase.id} + ')'">
                                                                     <i class="fas fa-times"></i> Cancelar
                                                                 </button>
@@ -204,8 +203,8 @@
                                                                             <span th:text="${clase.diaSemana}">Día</span> -
                                                                             <span th:text="${clase.horaInicio}">Hora</span>
                                                                         </small>
-                                                                    </p>
-                                                                </div> <button class="btn btn-sm btn-outline-primary"
+                                                                    </p> </div>
+                                                                <button class="btn btn-sm btn-outline-primary"
                                                                         th:onclick="'inscribirClase(' + ${clase.id} + ')'">
                                                                     <i class="fas fa-plus"></i> Inscribirse
                                                                 </button>
@@ -226,7 +225,7 @@
                                     </div>
 
                                 </div>
-                            </div>                      
+                            </div>                        
 
             <!-- Dashboard del Instructor -->
             <div sec:authorize="hasRole('INSTRUCTOR')">
@@ -552,3 +551,43 @@ if (document.getElementById('statsChart')) {
 </script>
 </body>
 </html>>
+                                                                        <i class="fas fa-calendar-day"></i> 
+                                                                        <span th:text="${clase.diaSemana}">Día</span>
+                                                                    </small>
+                                                                </p>
+                                                                <small class="text-muted">
+                                                                    <i class="fas fa-clock"></i>
+                                                                    <span th:text="${clase.horaInicio}">Hora</span> - 
+                                                                    <span th:text="${clase.horaFin}">Hora</span>
+                                                                </small>
+                                                            </div>
+                                                            <span class="badge bg-primary" th:text="${clase.nivel.descripcion}">Nivel</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div th:if="${misClases == null or #lists.isEmpty(misClases)}">
+                                                <p class="text-muted text-center">No tienes clases inscritas aún.</p>
+                                                <div class="text-center">
+                                                    <a href="#inscripciones" class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-plus"></i> Inscribirse a una Clase
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5><i class="fas fa-plus-circle"></i> Clases Disponibles</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div th:if="${clasesDisponibles != null and not #lists.isEmpty(clasesDisponibles)}">
+                                                <div class="list-group list-group-flush">
+                                                    <div class="list-group-item" th:each="clase : ${#lists.size(clasesDisponibles) > 3 ? clasesDisponibles.subList(0, 3) : clasesDisponibles}">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div>
+                                                                <h6 class="mb-1" th:text="${clase.nombre}">Clase</h6>
+                                                                <small class="text-muted"

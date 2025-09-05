@@ -72,8 +72,8 @@ public class MainController {
 
     // Métodos para la autenticación y registro
     @GetMapping("/login")
-    public String login(@RequestParam(value = "error", required = false) String error,
-                       @RequestParam(value = "logout", required = false) String logout,
+    public String login(@RequestParam(required = false) String error,
+                       @RequestParam(required = false) String logout,
                        Model model) {
         if (error != null) {
             model.addAttribute("error", "Email o contraseña incorrectos.");
@@ -91,31 +91,32 @@ public class MainController {
     }
 
     @PostMapping("/registro")
-    public String procesarRegistro(@Valid @ModelAttribute("usuario") Usuario usuario,
-                                   BindingResult result,
-                                   RedirectAttributes redirectAttributes) {
-            
+    public String procesarRegistro(@Valid @ModelAttribute Usuario usuario,
+                                BindingResult result,
+                                Model model) { // Importante: Cambia RedirectAttributes por Model
+
         System.out.println("=== PROCESANDO REGISTRO ===");
         System.out.println("Usuario: " + usuario.getNombre());
         System.out.println("Email: " + usuario.getEmail());
-        
+
         if (result.hasErrors()) {
             System.out.println("Errores de validación: " + result.getAllErrors());
-            return "auth/registro";
+            return "auth/registro"; // Devuelve la vista directamente
         }
-    
+        
         try {
             Usuario usuarioCreado = usuarioService.registrarUsuario(usuario);
             System.out.println("Usuario registrado con ID: " + usuarioCreado.getId());
-            redirectAttributes.addFlashAttribute("mensaje", 
-                "¡Registro exitoso! Ya puedes iniciar sesión.");
-            return "redirect:/login";
+            // En caso de éxito, redirige a login con un mensaje flash
+            model.addAttribute("mensaje", "¡Registro exitoso! Ya puedes iniciar sesión.");
+            return "auth/login";
         } catch (Exception e) {
             System.out.println("Error al registrar: " + e.getMessage());
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/registro";
+            model.addAttribute("error", e.getMessage());
+            return "auth/registro"; // Devuelve la vista directamente con el error
         }
     }
+    // ...
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {

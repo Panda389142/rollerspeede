@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.password.PasswordEncoder; // Ya no importas BCryptPasswordEncoder aquí
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -18,24 +18,22 @@ public class SecurityConfig {
     @Autowired
     private UsuarioService usuarioService;
 
-    // Inyecta el bean PasswordEncoder que ahora se crea en BeanConfiguration
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
+    DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(usuarioService);
-        authProvider.setPasswordEncoder(passwordEncoder); // Usa la variable inyectada
+        authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
 
-    // ELIMINA EL MÉTODO @Bean public PasswordEncoder() de esta clase
-    // Ya no lo necesitas aquí, lo creaste en BeanConfiguration.java
-
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            // 1. Agrega esta línea para ignorar la validación CSRF en la ruta de registro.
+            .csrf(csrf -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/registro", "POST")))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/home", "/registro", "/css/**", "/js/**", 
                                "/images/**", "/webjars/**").permitAll()

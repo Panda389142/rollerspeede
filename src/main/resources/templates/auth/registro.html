@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,268 +9,271 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
-                <div class="card shadow">
-                    <div class="card-body p-4">
-                        <h2 class="text-center mb-4">
-                            <i class="fas fa-user-plus"></i> Registro
-                        </h2>
+    <main layout:fragment="content">
 
-                        <!-- Alertas de error/éxito del servidor -->
-                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle"></i> <span th:text="${error}">Error</span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                        <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle"></i> <span th:text="${mensaje}">Mensaje</span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="card shadow">
+                        <div class="card-body p-4">
+                            <h2 class="text-center mb-4">
+                                <i class="fas fa-user-plus"></i> Registro
+                            </h2>
 
-                        <!-- Alerta para errores de validación del cliente -->
-                        <div id="validation-error" class="alert alert-danger d-none fade show" role="alert">
-                            <i class="fas fa-exclamation-circle"></i> <span id="error-message"></span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-
-                        <form th:action="@{/registro}" method="post" th:object="${usuario}" id="registration-form">
-                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-
-                            <!-- Datos personales -->
-                            <div class="mb-3">
-                                <label for="nombre" class="form-label">Nombre completo</label>
-                                <input type="text" class="form-control" id="nombre" 
-                                       th:field="*{nombre}" required>
+                            <!-- Alertas de error/éxito del servidor -->
+                            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle"></i> <span th:text="${error}">Error</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle"></i> <span th:text="${mensaje}">Mensaje</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" 
-                                       th:field="*{email}" required>
+                            <!-- Alerta para errores de validación del cliente -->
+                            <div id="validation-error" class="alert alert-danger d-none fade show" role="alert">
+                                <i class="fas fa-exclamation-circle"></i> <span id="error-message"></span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="telefono" class="form-label">Teléfono</label>
-                                <input type="tel" class="form-control" id="telefono" 
-                                       th:field="*{telefono}" required>
-                            </div>
+                            <form th:action="@{/registro}" method="post" th:object="${usuario}" id="registration-form">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-                            <div class="mb-3">
-                                <label for="fechaNacimiento" class="form-label">Fecha de nacimiento</label>
-                                <input type="date" class="form-control" id="fechaNacimiento" 
-                                       th:field="*{fechaNacimiento}" required>
-                            </div>
+                                <!-- Datos personales -->
+                                <div class="mb-3">
+                                    <label for="nombre" class="form-label">Nombre completo</label>
+                                    <input type="text" class="form-control" id="nombre" 
+                                        th:field="*{nombre}" required>
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="genero" class="form-label">Género</label>
-                                <select class="form-select" id="genero" th:field="*{genero}" required>
-                                    <option value="">Seleccione...</option>
-                                    <option value="MASCULINO">Masculino</option>
-                                    <option value="FEMENINO">Femenino</option>
-                                    <option value="OTRO">Otro</option>
-                                </select>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" 
+                                        th:field="*{email}" required>
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="medioPago" class="form-label">Método de Pago</label>
-                                <select class="form-select" id="medioPago" th:field="*{medioPago}" required>
-                                    <option value="">Seleccione método de pago...</option>
-                                    <option value="EFECTIVO">Efectivo</option>
-                                    <option value="TARJETA_CREDITO">Tarjeta de Crédito</option>
-                                    <option value="TARJETA_DEBITO">Tarjeta de Débito</option>
-                                    <option value="PSE">PSE</option>
-                                    <option value="NEQUI">Nequi</option>
-                                    <option value="DAVIPLATA">Daviplata</option>
-                                </select>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="telefono" class="form-label">Teléfono</label>
+                                    <input type="tel" class="form-control" id="telefono" 
+                                        th:field="*{telefono}" required>
+                                </div>
 
-                            <!-- Contraseñas -->
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Contraseña</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="password" 
-                                           th:field="*{password}" required>
-                                    <button type="button" class="btn btn-outline-secondary" id="togglePasswordBtn">
-                                        <i id="togglePasswordIcon" class="fas fa-eye"></i>
+                                <div class="mb-3">
+                                    <label for="fechaNacimiento" class="form-label">Fecha de nacimiento</label>
+                                    <input type="date" class="form-control" id="fechaNacimiento" 
+                                        th:field="*{fechaNacimiento}" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="genero" class="form-label">Género</label>
+                                    <select class="form-select" id="genero" th:field="*{genero}" required>
+                                        <option value="">Seleccione...</option>
+                                        <option value="MASCULINO">Masculino</option>
+                                        <option value="FEMENINO">Femenino</option>
+                                        <option value="OTRO">Otro</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="medioPago" class="form-label">Método de Pago</label>
+                                    <select class="form-select" id="medioPago" th:field="*{medioPago}" required>
+                                        <option value="">Seleccione método de pago...</option>
+                                        <option value="EFECTIVO">Efectivo</option>
+                                        <option value="TARJETA_CREDITO">Tarjeta de Crédito</option>
+                                        <option value="TARJETA_DEBITO">Tarjeta de Débito</option>
+                                        <option value="PSE">PSE</option>
+                                        <option value="NEQUI">Nequi</option>
+                                        <option value="DAVIPLATA">Daviplata</option>
+                                    </select>
+                                </div>
+
+                                <!-- Contraseñas -->
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Contraseña</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="password" 
+                                            th:field="*{password}" required>
+                                        <button type="button" class="btn btn-outline-secondary" id="togglePasswordBtn">
+                                            <i id="togglePasswordIcon" class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="confirmarPassword" class="form-label">Confirmar contraseña</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="confirmarPassword" required>
+                                        <button type="button" class="btn btn-outline-secondary" id="toggleConfirmPasswordBtn">
+                                            <i id="toggleConfirmPasswordIcon" class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div id="passwordMatch" class="form-text"></div>
+                                </div>
+
+                                <!-- Términos y condiciones -->
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="terminos" required>
+                                        <label class="form-check-label" for="terminos">
+                                            Acepto los <a href="#" data-bs-toggle="modal" 
+                                            data-bs-target="#terminosModal">términos y condiciones</a> y la 
+                                            <a href="#" data-bs-toggle="modal" 
+                                            data-bs-target="#privacidadModal">política de privacidad</a>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-user-plus"></i> Registrarse
                                     </button>
+                                    <a th:href="@{/login}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-sign-in-alt"></i> Ya tengo una cuenta
+                                    </a>
                                 </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="confirmarPassword" class="form-label">Confirmar contraseña</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="confirmarPassword" required>
-                                    <button type="button" class="btn btn-outline-secondary" id="toggleConfirmPasswordBtn">
-                                        <i id="toggleConfirmPasswordIcon" class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                                <div id="passwordMatch" class="form-text"></div>
-                            </div>
-
-                            <!-- Términos y condiciones -->
-                            <div class="mb-4">
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="terminos" required>
-                                    <label class="form-check-label" for="terminos">
-                                        Acepto los <a href="#" data-bs-toggle="modal" 
-                                        data-bs-target="#terminosModal">términos y condiciones</a> y la 
-                                        <a href="#" data-bs-toggle="modal" 
-                                        data-bs-target="#privacidadModal">política de privacidad</a>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-user-plus"></i> Registrarse
-                                </button>
-                                <a th:href="@{/login}" class="btn btn-outline-secondary">
-                                    <i class="fas fa-sign-in-alt"></i> Ya tengo una cuenta
-                                </a>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modales -->
-    <div class="modal fade" id="terminosModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Términos y Condiciones</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Al registrarte aceptas nuestros términos de servicio...</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="privacidadModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Política de Privacidad</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Respetamos tu privacidad y protegemos tus datos...</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <!-- Modales -->
+        <div class="modal fade" id="terminosModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Términos y Condiciones</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Al registrarte aceptas nuestros términos de servicio...</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Función para alternar la visibilidad de la contraseña
-        const togglePassword = (input, icon) => {
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        };
+        <div class="modal fade" id="privacidadModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Política de Privacidad</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Respetamos tu privacidad y protegemos tus datos...</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        // Eventos para alternar contraseñas
-        const passwordInput = document.getElementById('password');
-        const togglePasswordIcon = document.getElementById('togglePasswordIcon');
-        document.getElementById('togglePasswordBtn').addEventListener('click', () => {
-            togglePassword(passwordInput, togglePasswordIcon);
-        });
-
-        const confirmPasswordInput = document.getElementById('confirmarPassword');
-        const toggleConfirmPasswordIcon = document.getElementById('toggleConfirmPasswordIcon');
-        document.getElementById('toggleConfirmPasswordBtn').addEventListener('click', () => {
-            togglePassword(confirmPasswordInput, toggleConfirmPasswordIcon);
-        });
-
-        // Validación de contraseñas en tiempo real
-        confirmPasswordInput.addEventListener('input', () => {
-            const password = passwordInput.value;
-            const confirmPassword = confirmPasswordInput.value;
-            const matchDiv = document.getElementById('passwordMatch');
-            
-            if (confirmPassword.length > 0) {
-                if (password === confirmPassword) {
-                    matchDiv.textContent = '✅ Las contraseñas coinciden';
-                    matchDiv.className = 'form-text text-success';
-                    confirmPasswordInput.classList.remove('is-invalid');
-                    confirmPasswordInput.classList.add('is-valid');
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // Función para alternar la visibilidad de la contraseña
+            const togglePassword = (input, icon) => {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
                 } else {
-                    matchDiv.textContent = '❌ Las contraseñas no coinciden';
-                    matchDiv.className = 'form-text text-danger';
-                    confirmPasswordInput.classList.remove('is-valid');
-                    confirmPasswordInput.classList.add('is-invalid');
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
                 }
-            } else {
-                matchDiv.textContent = '';
-                confirmPasswordInput.classList.remove('is-valid', 'is-invalid');
-            }
-        });
+            };
 
-        // Validación del formulario antes de enviar
-        document.getElementById('registration-form').addEventListener('submit', function(e) {
-            const password = passwordInput.value;
-            const confirmPassword = confirmPasswordInput.value;
-            const terminos = document.getElementById('terminos').checked;
-            const errorMessageDiv = document.getElementById('validation-error');
-            const errorMessageSpan = document.getElementById('error-message');
+            // Eventos para alternar contraseñas
+            const passwordInput = document.getElementById('password');
+            const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+            document.getElementById('togglePasswordBtn').addEventListener('click', () => {
+                togglePassword(passwordInput, togglePasswordIcon);
+            });
 
-            let errors = [];
+            const confirmPasswordInput = document.getElementById('confirmarPassword');
+            const toggleConfirmPasswordIcon = document.getElementById('toggleConfirmPasswordIcon');
+            document.getElementById('toggleConfirmPasswordBtn').addEventListener('click', () => {
+                togglePassword(confirmPasswordInput, toggleConfirmPasswordIcon);
+            });
 
-            if (password !== confirmPassword) {
-                errors.push('Las contraseñas no coinciden.');
-            }
-            
-            if (!terminos) {
-                errors.push('Debes aceptar los términos y condiciones.');
-            }
-            
-            const fechaNacimiento = new Date(document.getElementById('fechaNacimiento').value);
-            const hoy = new Date();
-            const edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
-            
-            if (edad < 5) {
-                errors.push('La edad mínima para registrarse es 5 años.');
-            }
-
-            if (errors.length > 0) {
-                e.preventDefault();
-                errorMessageSpan.innerHTML = errors.join('<br>');
-                errorMessageDiv.classList.remove('d-none');
-                window.scrollTo(0, 0); // Desplaza al principio de la página para ver el error
-            } else {
-                errorMessageDiv.classList.add('d-none');
-            }
-        });
-
-        // Autovalidación en tiempo real para todos los campos requeridos
-        document.querySelectorAll('input[required], select[required]').forEach(input => {
-            input.addEventListener('blur', function() {
-                if (this.checkValidity()) {
-                    this.classList.remove('is-invalid');
-                    this.classList.add('is-valid');
+            // Validación de contraseñas en tiempo real
+            confirmPasswordInput.addEventListener('input', () => {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                const matchDiv = document.getElementById('passwordMatch');
+                
+                if (confirmPassword.length > 0) {
+                    if (password === confirmPassword) {
+                        matchDiv.textContent = '✅ Las contraseñas coinciden';
+                        matchDiv.className = 'form-text text-success';
+                        confirmPasswordInput.classList.remove('is-invalid');
+                        confirmPasswordInput.classList.add('is-valid');
+                    } else {
+                        matchDiv.textContent = '❌ Las contraseñas no coinciden';
+                        matchDiv.className = 'form-text text-danger';
+                        confirmPasswordInput.classList.remove('is-valid');
+                        confirmPasswordInput.classList.add('is-invalid');
+                    }
                 } else {
-                    this.classList.remove('is-valid');
-                    this.classList.add('is-invalid');
+                    matchDiv.textContent = '';
+                    confirmPasswordInput.classList.remove('is-valid', 'is-invalid');
                 }
             });
-        });
-    </script>
+
+            // Validación del formulario antes de enviar
+            document.getElementById('registration-form').addEventListener('submit', function(e) {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                const terminos = document.getElementById('terminos').checked;
+                const errorMessageDiv = document.getElementById('validation-error');
+                const errorMessageSpan = document.getElementById('error-message');
+
+                let errors = [];
+
+                if (password !== confirmPassword) {
+                    errors.push('Las contraseñas no coinciden.');
+                }
+                
+                if (!terminos) {
+                    errors.push('Debes aceptar los términos y condiciones.');
+                }
+                
+                const fechaNacimiento = new Date(document.getElementById('fechaNacimiento').value);
+                const hoy = new Date();
+                const edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+                
+                if (edad < 5) {
+                    errors.push('La edad mínima para registrarse es 5 años.');
+                }
+
+                if (errors.length > 0) {
+                    e.preventDefault();
+                    errorMessageSpan.innerHTML = errors.join('<br>');
+                    errorMessageDiv.classList.remove('d-none');
+                    window.scrollTo(0, 0); // Desplaza al principio de la página para ver el error
+                } else {
+                    errorMessageDiv.classList.add('d-none');
+                }
+            });
+
+            // Autovalidación en tiempo real para todos los campos requeridos
+            document.querySelectorAll('input[required], select[required]').forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.checkValidity()) {
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    } else {
+                        this.classList.remove('is-valid');
+                        this.classList.add('is-invalid');
+                    }
+                });
+            });
+        </script>
+    </main>
 </body>
 </html>
