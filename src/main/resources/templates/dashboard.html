@@ -266,7 +266,7 @@
                                                                 <tr th:each="clase : ${misClases}">
                                                                     <td th:text="${clase.nombre}">Nombre</td>
                                                                     <td>
-                                                                        <span class="badge bg-info" th:text="${clase.nivel?.descripcion ?: 'N/A'}">Nivel</span>
+                                                                        <span class="badge bg-info" th:text="${clase.nivel?.name() ?: 'N/A'}">Nivel</span>
                                                                     </td>
                                                                     <td th:text="${clase.diaSemana}">Día</td>
                                                                     <td>
