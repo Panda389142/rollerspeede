@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Servicios - RollerSpeed</title>
+</head>
+<body>
+    <main layout:fragment="content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col-12">
+                        <h1 class="display-4 fw-bold mb-4">Nuestros Servicios</h1>
+                        <p class="lead mb-4">
+                            Descubre todas las clases y servicios que ofrecemos para que puedas desarrollar tus habilidades sobre ruedas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Niveles de Entrenamiento -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row mb-5">
+                    <div class="col-12 text-center">
+                        <h2 class="fw-bold">Niveles de Entrenamiento</h2>
+                        <p class="lead text-muted">Clases adaptadas a tu nivel de experiencia</p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-success mb-3">
+                                    <i class="fas fa-seedling"></i>
+                                </div>
+                                <h5 class="card-title">Principiante</h5>
+                                <p class="card-text">
+                                    Para quienes dan sus primeros pasos en el patinaje.
+                                    Aprenderás las bases y ganarás confianza.
+                                </p>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success"></i> Técnicas básicas</li>
+                                    <li><i class="fas fa-check text-success"></i> Equilibrio y control</li>
+                                    <li><i class="fas fa-check text-success"></i> Seguridad en pista</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-warning mb-3">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <h5 class="card-title">Intermedio</h5>
+                                <p class="card-text">
+                                    Para patinadores con experiencia básica que quieren mejorar sus habilidades.
+                                </p>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success"></i> Giros y saltos</li>
+                                    <li><i class="fas fa-check text-success"></i> Velocidad controlada</li>
+                                    <li><i class="fas fa-check text-success"></i> Figuras artísticas</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-danger mb-3">
+                                    <i class="fas fa-fire"></i>
+                                </div>
+                                <h5 class="card-title">Avanzado</h5>
+                                <p class="card-text">
+                                    Para patinadores experimentados que buscan perfeccionar su técnica y estilo.
+                                </p>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success"></i> Coreografías complejas</li>
+                                    <li><i class="fas fa-check text-success"></i> Alta velocidad</li>
+                                    <li><i class="fas fa-check text-success"></i> Estilo freestyle</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-primary mb-3">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <h5 class="card-title">Competitivo</h5>
+                                <p class="card-text">
+                                    Preparación intensiva para competencias locales, regionales y nacionales.
+                                </p>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success"></i> Entrenamiento de élite</li>
+                                    <li><i class="fas fa-check text-success"></i> Análisis de rendimiento</li>
+                                    <li><i class="fas fa-check text-success"></i> Preparación física</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Clases Disponibles -->
+        <section class="py-5 bg-light">
+            <div class="container">
+                <div class="row mb-5">
+                    <div class="col-12 text-center">
+                        <h2 class="fw-bold">Clases Disponibles</h2>
+                        <p class="lead text-muted">Horarios y cupos actualizados</p>
+                    </div>
+                </div>
+
+                <div class="row g-4" th:if="${clases != null and not #lists.isEmpty(clases)}">
+                    <div class="col-lg-4 col-md-6" th:each="clase, iterStat : ${clases}">
+                        <div class="card h-100" th:classappend="${iterStat.index == 0} ? 'border-primary' : ''">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0" th:text="${clase.nombre}">Nombre de la Clase</h5>
+                                    <span class="badge nivel-badge" th:classappend="${clase.nivel.name() == 'PRINCIPIANTE' ? 'bg-success' : (clase.nivel.name() == 'INTERMEDIO' ? 'bg-warning' : (clase.nivel.name() == 'AVANZADO' ? 'bg-danger' : 'bg-dark'))}"
+                                          th:text="${clase.nivel.descripcion}">
+                                        Nivel
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text" th:text="${clase.descripcion}">Descripción de la clase</p>
+
+                                <div class="mb-3">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <small class="text-muted d-block">Día</small>
+                                            <strong th:text="${clase.diaSemana}">Lunes</strong>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted d-block">Horario</small>
+                                            <strong>
+                                                <span th:text="${clase.horaInicio}">10:00</span> -
+                                                <span th:text="${clase.horaFin}">11:30</span>
+                                            </strong>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted d-block">Cupos</small>
+                                            <strong>
+                                                <span th:text="${clase.cuposDisponibles}">15</span>/
+                                                <span th:text="${clase.capacidadMaxima}">20</span>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted" th:if="${clase.instructor != null}">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                        <span th:text="${clase.instructor.nombre}">Instructor</span>
+                                    </small>
+
+                                    <div>
+                                        <button class="btn btn-primary btn-sm"
+                                                th:if="${clase.tieneCupo()}"
+                                                th:onclick="'inscribirClaseFn(' + ${clase.id} + ')'">
+                                            <i class="fas fa-plus"></i> Inscribirse
+                                        </button>
+                                        <span class="badge bg-secondary" th:unless="${clase.tieneCupo()}">
+                                            Sin cupos
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center" th:if="${clases == null or #lists.isEmpty(clases)}">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        Próximamente tendremos nuevas clases disponibles. ¡Mantente atento!
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Servicios Adicionales -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row mb-5">
+                    <div class="col-12 text-center">
+                        <h2 class="fw-bold">Servicios Adicionales</h2>
+                        <p class="lead text-muted">Todo lo que necesitas para tu experiencia completa</p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="display-4 text-info mb-3">
+                                    <i class="fas fa-tools"></i>
+                                </div>
+                                <h5 class="card-title">Mantenimiento de Patines</h5>
+                                <p class="card-text">
+                                    Servicio profesional de mantenimiento y reparación de patines.
+                                    Ajustes, cambios de ruedas y limpieza especializada.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-success mb-3">
+                                    <i class="fas fa-store"></i>
+                                </div>
+                                <h5 class="card-title">Tienda de Equipos</h5>
+                                <p class="card-text">
+                                    Equipos de patinaje de las mejores marcas.
+                                    Patines, cascos, rodilleras y todo el equipo de protección necesario.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-warning mb-3">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h5 class="card-title">Eventos y Competencias</h5>
+                                <p class="card-text">
+                                    Organización de eventos, torneos y competencias.
+                                    Participa en nuestros eventos locales y demuestra tus habilidades.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="py-5 bg-primary text-white">
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="fw-bold mb-3">¿Listo para comenzar?</h2>
+                        <p class="lead mb-4">
+                            Únete a nuestra comunidad de patinadores y comienza tu viaje sobre ruedas.
+                        </p>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a th:href="@{/registro}" class="btn btn-light btn-lg me-md-2">
+                                <i class="fas fa-user-plus"></i> Regístrate Ahora
+                            </a>
+                            <a th:href="@{/contacto}" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-envelope"></i> Contáctanos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>

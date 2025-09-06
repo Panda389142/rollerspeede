@@ -43,6 +43,10 @@ public class Clase {
     @Max(value = 50, message = "La capacidad máxima no puede exceder 50")
     private Integer capacidadMaxima;
 
+    @Column
+    @DecimalMin(value = "0.0", message = "El precio no puede ser negativo")
+    private Double precio;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "instructor_id")
     private Usuario instructor;
@@ -116,6 +120,9 @@ public class Clase {
 
     public Boolean getActiva() { return activa; }
     public void setActiva(Boolean activa) { this.activa = activa; }
+
+    public Double getPrecio() { return precio; }
+    public void setPrecio(Double precio) { this.precio = precio; }
 
     // Enums
     public enum Nivel {

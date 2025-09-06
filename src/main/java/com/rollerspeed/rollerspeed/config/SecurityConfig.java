@@ -33,10 +33,16 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             // 1. Agrega esta línea para ignorar la validación CSRF en la ruta de registro.
-            .csrf(csrf -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/registro", "POST")))
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers(new AntPathRequestMatcher("/registro", "POST"))
+                .ignoringRequestMatchers(new AntPathRequestMatcher("/inscripcion/**")) // Ignorar CSRF para la API de inscripción
+            )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/home", "/registro", "/css/**", "/js/**", 
-                               "/images/**", "/webjars/**").permitAll()
+                .requestMatchers("/", "/home", "/registro", "/css/**", "/js/**",
+                               "/images/**", "/webjars/**", "/sobre-nosotros", "/servicios",
+                               "/galeria", "/noticias", "/contacto", "/testimonios").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
+                .requestMatchers("/dashboard", "/perfil", "/inscripcion/**").hasAnyRole("ALUMNO", "INSTRUCTOR", "ADMINISTRADOR")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

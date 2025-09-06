@@ -2,8 +2,14 @@ package com.rollerspeed.rollerspeed.config;
 
 import com.rollerspeed.rollerspeed.model.Clase;
 import com.rollerspeed.rollerspeed.model.Usuario;
+import com.rollerspeed.rollerspeed.model.Testimonio;
+import com.rollerspeed.rollerspeed.model.Noticia;
+import com.rollerspeed.rollerspeed.model.Evento;
 import com.rollerspeed.rollerspeed.repository.ClaseRepository;
 import com.rollerspeed.rollerspeed.repository.UsuarioRepository;
+import com.rollerspeed.rollerspeed.repository.TestimonioRepository;
+import com.rollerspeed.rollerspeed.repository.NoticiaRepository;
+import com.rollerspeed.rollerspeed.repository.EventoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +28,15 @@ public class DataLoader implements CommandLineRunner {
     private ClaseRepository claseRepository;
 
     @Autowired
+    private TestimonioRepository testimonioRepository;
+
+    @Autowired
+    private NoticiaRepository noticiaRepository;
+
+    @Autowired
+    private EventoRepository eventoRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
@@ -29,6 +44,9 @@ public class DataLoader implements CommandLineRunner {
         // Crear usuarios de prueba si no existen
         crearUsuariosDePrueba();
         crearClasesDePrueba();
+        crearTestimoniosDePrueba();
+        crearNoticiasDePrueba();
+        crearEventosDePrueba();
     }
 
     private void crearUsuariosDePrueba() {
@@ -205,6 +223,77 @@ public class DataLoader implements CommandLineRunner {
             claseRepository.save(dominical);
 
             System.out.println("Clases de prueba creadas exitosamente");
+        }
+    }
+
+    private void crearTestimoniosDePrueba() {
+        if (testimonioRepository.count() == 0) {
+            Testimonio testimonio1 = new Testimonio();
+            testimonio1.setNombre("María González");
+            testimonio1.setComentario("RollerSpeed cambió mi vida. Llegué sin saber patinar y ahora compito a nivel nacional. Los instructores son excepcionales.");
+            testimonio1.setActivo(true);
+            testimonioRepository.save(testimonio1);
+
+            Testimonio testimonio2 = new Testimonio();
+            testimonio2.setNombre("Carlos Mendoza");
+            testimonio2.setComentario("Mi hijo encontró su pasión aquí. El ambiente es familiar y seguro. Recomiendo RollerSpeed a todos los padres.");
+            testimonio2.setActivo(true);
+            testimonioRepository.save(testimonio2);
+
+            Testimonio testimonio3 = new Testimonio();
+            testimonio3.setNombre("Ana Patricia Ruiz");
+            testimonio3.setComentario("Nunca es tarde para aprender. A los 35 años decidí patinar y ha sido una experiencia increíble. ¡Altamente recomendado!");
+            testimonio3.setActivo(true);
+            testimonioRepository.save(testimonio3);
+
+            System.out.println("Testimonios de prueba creados exitosamente");
+        }
+    }
+
+    private void crearNoticiasDePrueba() {
+        if (noticiaRepository.count() == 0) {
+            // Obtener el administrador como autor
+            Usuario admin = usuarioRepository.findByEmail("admin@rollerspeed.com").orElse(null);
+            if (admin == null) {
+                System.out.println("No se pueden crear noticias: no hay administrador disponible");
+                return;
+            }
+
+            Noticia noticia1 = new Noticia();
+            noticia1.setTitulo("Nueva Temporada de Competencias");
+            noticia1.setContenido("¡Atención patinadores! Ya está abierta la inscripción para la temporada 2025 de competencias locales y regionales. Prepárense para mostrar todo su talento.");
+            noticia1.setAutor(admin);
+            noticia1.setActivo(true);
+            noticiaRepository.save(noticia1);
+
+            Noticia noticia2 = new Noticia();
+            noticia2.setTitulo("Clases Especiales de Verano");
+            noticia2.setContenido("Durante las vacaciones de verano ofreceremos clases intensivas de patinaje artístico y velocidad. ¡No te quedes fuera!");
+            noticia2.setAutor(admin);
+            noticia2.setActivo(true);
+            noticiaRepository.save(noticia2);
+
+            System.out.println("Noticias de prueba creadas exitosamente");
+        }
+    }
+
+    private void crearEventosDePrueba() {
+        if (eventoRepository.count() == 0) {
+            Evento evento1 = new Evento();
+            evento1.setTitulo("Torneo Anual de Patinaje");
+            evento1.setDescripcion("Gran torneo anual donde participarán patinadores de toda la región. ¡Ven a apoyar a nuestros estudiantes!");
+            evento1.setFechaEvento(java.time.LocalDateTime.now().plusDays(30));
+            evento1.setActivo(true);
+            eventoRepository.save(evento1);
+
+            Evento evento2 = new Evento();
+            evento2.setTitulo("Día del Patinador");
+            evento2.setDescripcion("Celebración especial con exhibiciones, clases gratuitas y actividades recreativas para toda la familia.");
+            evento2.setFechaEvento(java.time.LocalDateTime.now().plusDays(60));
+            evento2.setActivo(true);
+            eventoRepository.save(evento2);
+
+            System.out.println("Eventos de prueba creados exitosamente");
         }
     }
 }

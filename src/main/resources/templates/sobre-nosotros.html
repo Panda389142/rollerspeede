@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Sobre Nosotros - RollerSpeed</title>
+</head>
+<body>
+    <main layout:fragment="content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col-12">
+                        <h1 class="display-4 fw-bold mb-4">Sobre RollerSpeed</h1>
+                        <p class="lead mb-4">
+                            La escuela de patinaje líder en Santa Marta, formando campeones desde hace más de 10 años.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Estadísticas -->
+        <section class="py-5 bg-light">
+            <div class="container">
+                <div class="row text-center mb-5">
+                    <div class="col-12">
+                        <h2 class="fw-bold">Nuestros Números</h2>
+                        <p class="lead text-muted">El resultado de años de dedicación y pasión</p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-primary mb-3">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h3 class="card-title" th:text="${totalAlumnos != null ? totalAlumnos : '500+'}">500+</h3>
+                                <p class="card-text">Alumnos activos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-success mb-3">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                                <h3 class="card-title" th:text="${totalInstructores != null ? totalInstructores : '15'}">15</h3>
+                                <p class="card-text">Instructores certificados</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-warning mb-3">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <h3 class="card-title">50+</h3>
+                                <p class="card-text">Campeonatos ganados</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-danger mb-3">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <h3 class="card-title">10+</h3>
+                                <p class="card-text">Años de experiencia</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Misión, Visión, Valores -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row mb-5">
+                    <div class="col-12 text-center">
+                        <h2 class="fw-bold">Nuestra Filosofía</h2>
+                        <p class="lead text-muted">Los principios que guían nuestro trabajo diario</p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-primary mb-3">
+                                    <i class="fas fa-bullseye"></i>
+                                </div>
+                                <h4 class="card-title">Misión</h4>
+                                <p class="card-text">
+                                    Formar patinadores integrales a través de la enseñanza técnica, el desarrollo de habilidades físicas
+                                    y el fortalecimiento de valores éticos, contribuyendo al crecimiento del patinaje en Colombia.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-success mb-3">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <h4 class="card-title">Visión</h4>
+                                <p class="card-text">
+                                    Ser la escuela de patinaje de referencia en Colombia, reconocida por la calidad de su formación,
+                                    el desarrollo de campeones y su contribución al deporte nacional.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <div class="display-4 text-warning mb-3">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <h4 class="card-title">Valores</h4>
+                                <p class="card-text">
+                                    <strong>Excelencia:</strong> Buscamos la perfección en cada movimiento.<br>
+                                    <strong>Disciplina:</strong> El esfuerzo constante nos lleva al éxito.<br>
+                                    <strong>Respeto:</strong> Valoramos a las personas y el deporte.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Historia -->
+        <section class="py-5 bg-light">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h2 class="fw-bold mb-4">Nuestra Historia</h2>
+                        <p class="lead mb-4">
+                            RollerSpeed nació en 2014 con la visión de crear una escuela de patinaje que combinara
+                            la formación técnica de alto nivel con valores humanos y éticos.
+                        </p>
+                        <p>
+                            Fundada por Carlos Mendoza, ex-campeón nacional de patinaje artístico, la escuela comenzó
+                            con solo 20 estudiantes en un pequeño gimnasio. Hoy, somos la institución líder en formación
+                            de patinadores en la región Caribe, con más de 500 alumnos activos y un equipo de 15
+                            instructores certificados.
+                        </p>
+                        <p>
+                            Nuestra metodología única combina el entrenamiento deportivo de élite con un enfoque
+                            pedagógico que desarrolla no solo habilidades físicas, sino también disciplina, confianza
+                            y trabajo en equipo.
+                        </p>
+                    </div>
+                    <div class="col-lg-6">
+                        <img src="/images/historia-rollerspeed.jpg" alt="Historia de RollerSpeed"
+                             class="img-fluid rounded shadow" style="max-height: 400px; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Equipo -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row mb-5">
+                    <div class="col-12 text-center">
+                        <h2 class="fw-bold">Nuestro Equipo</h2>
+                        <p class="lead text-muted">Profesionales dedicados a tu formación</p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <img src="/images/founder.jpg" alt="Carlos Mendoza"
+                                     class="rounded-circle mb-3" width="120" height="120">
+                                <h5 class="card-title">Carlos Mendoza</h5>
+                                <p class="card-text">Fundador y Director Técnico<br>
+                                <small class="text-muted">Ex-campeón nacional de patinaje artístico</small></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <img src="/images/instructor1.jpg" alt="María Rodríguez"
+                                     class="rounded-circle mb-3" width="120" height="120">
+                                <h5 class="card-title">María Rodríguez</h5>
+                                <p class="card-text">Coordinadora de Instructores<br>
+                                <small class="text-muted">Especialista en patinaje de velocidad</small></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <img src="/images/instructor2.jpg" alt="Juan Pérez"
+                                     class="rounded-circle mb-3" width="120" height="120">
+                                <h5 class="card-title">Juan Pérez</h5>
+                                <p class="card-text">Instructor Senior<br>
+                                <small class="text-muted">Entrenador de patinaje artístico</small></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <img src="/images/instructor3.jpg" alt="Ana López"
+                                     class="rounded-circle mb-3" width="120" height="120">
+                                <h5 class="card-title">Ana López</h5>
+                                <p class="card-text">Instructora de Niños<br>
+                                <small class="text-muted">Especialista en pedagogía deportiva</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="py-5 bg-primary text-white">
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="fw-bold mb-3">¿Quieres ser parte de nuestra historia?</h2>
+                        <p class="lead mb-4">
+                            Únete a la familia RollerSpeed y comienza tu camino hacia el éxito en el patinaje.
+                        </p>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a th:href="@{/registro}" class="btn btn-light btn-lg me-md-2">
+                                <i class="fas fa-user-plus"></i> Únete Ahora
+                            </a>
+                            <a th:href="@{/contacto}" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-envelope"></i> Contáctanos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

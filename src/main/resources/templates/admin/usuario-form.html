@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<body>
+    <main layout:fragment="content">
+        <div class="container mt-4">
+            <h1 class="mb-4">Crear Nuevo Usuario</h1>
+
+            <div class="card">
+                <div class="card-body">
+                    <!-- El action apuntará a una futura ruta POST para guardar el usuario -->
+                    <form th:action="@{/admin/usuarios/guardar}" method="post" th:object="${usuario}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nombre" class="form-label">Nombre Completo</label>
+                                <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" id="password" th:field="*{password}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" id="telefono" th:field="*{telefono}" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+                                <input type="date" class="form-control" id="fechaNacimiento" th:field="*{fechaNacimiento}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="genero" class="form-label">Género</label>
+                                <select class="form-select" id="genero" th:field="*{genero}" required>
+                                    <option th:each="g : ${T(com.rollerspeed.rollerspeed.model.Usuario.Genero).values()}"
+                                            th:value="${g}" th:text="${g}">Género</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                             <div class="col-md-6 mb-3">
+                                <label for="rol" class="form-label">Rol</label>
+                                <select class="form-select" id="rol" th:field="*{rol}" required>
+                                    <option th:each="r : ${T(com.rollerspeed.rollerspeed.model.Usuario.Rol).values()}"
+                                            th:value="${r}" th:text="${r}">Rol</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="medioPago" class="form-label">Medio de Pago</label>
+                                <select class="form-select" id="medioPago" th:field="*{medioPago}" required>
+                                    <option th:each="mp : ${T(com.rollerspeed.rollerspeed.model.Usuario.MedioPago).values()}"
+                                            th:value="${mp}" th:text="${mp}">Medio de Pago</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Usuario
+                            </button>
+                            <a th:href="@{/dashboard}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

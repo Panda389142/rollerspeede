@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title th:text="${title != null ? title + ' - RollerSpeed' : 'RollerSpeed - Escuela de Patinaje'}">RollerSpeed</title>
     
     <!-- Bootstrap CSS -->
@@ -95,6 +97,19 @@
             background-color: var(--primary-color);
             color: white;
         }
+
+        /* Estilos adicionales para asegurar el dropdown */
+        .dropdown-menu {
+            z-index: 1050;
+        }
+
+        .navbar .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .navbar .dropdown-menu {
+            margin-top: 0;
+        }
     </style>
 </head>
 <body>
@@ -105,7 +120,7 @@
                 <i class="fas fa-skating"></i> RollerSpeed
             </a>
             
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
@@ -132,31 +147,38 @@
                 </ul>
                 
                 <ul class="navbar-nav">
+                    <!-- Para usuarios NO autenticados -->
                     <li class="nav-item" sec:authorize="!isAuthenticated()">
                         <a class="nav-link" th:href="@{/login}">
                             <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
                         </a>
                     </li>
                     <li class="nav-item" sec:authorize="!isAuthenticated()">
-                        <a class="btn btn-primary btn-sm" th:href="@{/registro}">
+                        <a class="btn btn-primary btn-sm ms-2" th:href="@{/registro}">
                             <i class="fas fa-user-plus"></i> Registrarse
                         </a>
                     </li>
-                    
+
+                    <!-- Para usuarios autenticados -->
                     <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-user"></i> <span sec:authentication="name"></span>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" th:href="@{/dashboard}">
-                                <i class="fas fa-tachometer-alt"></i> Dashboard
-                            </a></li>
-                            <li><a class="dropdown-item" th:href="@{/perfil}">
-                                <i class="fas fa-user-edit"></i> Mi Perfil
-                            </a></li>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li>
+                                <a class="dropdown-item" th:href="@{/dashboard}">
+                                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/perfil}">
+                                    <i class="fas fa-user-edit"></i> Mi Perfil
+                                </a>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <form th:action="@{/logout}" method="post" style="display: inline;">
+                                <form th:action="@{/logout}" method="post" class="d-inline-block w-100">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                     <button type="submit" class="dropdown-item">
                                         <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
                                     </button>
@@ -171,13 +193,13 @@
 
     <!-- Alertas -->
     <div class="container mt-3" th:if="${not #strings.isEmpty(mensaje)} or ${not #strings.isEmpty(error)}">
-        <div class="alert alert-success alert-dismissible fade show" th:if="${not #strings.isEmpty(mensaje)}">
+        <div class="alert alert-success alert-dismissible fade show" th:if="${not #strings.isEmpty(mensaje)}" role="alert">
             <i class="fas fa-check-circle"></i> <span th:text="${mensaje}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        <div class="alert alert-danger alert-dismissible fade show" th:if="${not #strings.isEmpty(error)}">
+        <div class="alert alert-danger alert-dismissible fade show" th:if="${not #strings.isEmpty(error)}" role="alert">
             <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     </div>
 
@@ -237,6 +259,106 @@
                 }
             });
         }, 5000);
+
+        // Verificar que Bootstrap está funcionando correctamente
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Bootstrap version:', bootstrap.Tooltip.VERSION || 'Bootstrap cargado');
+            
+            // Verificar dropdown
+            const dropdownElement = document.getElementById('userDropdown');
+            if (dropdownElement) {
+                console.log('Dropdown encontrado:', dropdownElement);
+                
+                // Inicializar dropdown manualmente si es necesario
+                const dropdown = new bootstrap.Dropdown(dropdownElement);
+                console.log('Dropdown inicializado:', dropdown);
+            }
+        });
+
+        // Funciones de inscripción
+        function inscribirClaseFn(claseId) {
+            const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+            fetch('/inscripcion/clase/' + claseId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    ...(header && token && { [header]: token })
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url; // Redirigir si no está autenticado
+                    return;
+                }
+                return response.text();
+            })
+            .then(result => {
+                if (result === 'success') {
+                    alert('¡Te has inscrito exitosamente a la clase!');
+                    location.reload();
+                } else if (result === 'error') {
+                    alert('Error al inscribirse. La clase puede estar llena, ya estar inscrito o no tener permisos.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error de conexión. Intenta nuevamente.');
+            });
+        }
+
+        function cancelarInscripcionFn(claseId) {
+            const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+            fetch('/inscripcion/cancelar/' + claseId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    ...(header && token && { [header]: token })
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.text())
+            .then(result => {
+                if (result === 'success') {
+                    alert('¡Inscripción cancelada exitosamente!');
+                    location.reload();
+                } else {
+                    alert('Error al cancelar la inscripción.');
+                }
+            });
+        }
+
+        // --- Funciones para Instructores ---
+        function verAlumnosFn(claseId) {
+            // Placeholder: Redirigir a una futura página de lista de alumnos
+            alert('Funcionalidad para ver alumnos de la clase ' + claseId + ' próximamente.');
+            // window.location.href = '/instructor/clase/' + claseId + '/alumnos';
+        }
+
+        function registrarAsistenciaFn(claseId) {
+            // Placeholder: Redirigir a una futura página de asistencia
+            alert('Funcionalidad para registrar asistencia de la clase ' + claseId + ' próximamente.');
+            // window.location.href = '/instructor/clase/' + claseId + '/asistencia';
+        }
+
+        // --- Funciones para Administradores ---
+        function crearUsuarioFn() {
+            window.location.href = '/admin/usuarios/nuevo';
+        }
+
+        function crearClaseFn() {
+            window.location.href = '/admin/clases/nuevo';
+        }
+
+        function generarReporteFn() {
+            alert('Funcionalidad de reportes próximamente disponible.');
+        }
     </script>
 </body>
 </html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Galería - RollerSpeed</title>
+</head>
+<body>
+    <main layout:fragment="content">
+        <section class="hero-section">
+            <div class="container text-center">
+                <h1 class="display-4 fw-bold mb-4">Galería de RollerSpeed</h1>
+                <p class="lead mb-4">Fotos y videos de entrenamientos, eventos y logros de nuestra escuela.</p>
+            </div>
+        </section>
+
+        <section class="py-5">
+            <div class="container">
+                <div class="row g-4">
+                    <!-- Example static images, replace with dynamic content as needed -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img src="/images/gallery1.jpg" class="card-img-top" alt="Entrenamiento 1">
+                            <div class="card-body">
+                                <p class="card-text">Entrenamiento intensivo de velocidad.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img src="/images/gallery2.jpg" class="card-img-top" alt="Evento 1">
+                            <div class="card-body">
+                                <p class="card-text">Competencia regional 2024.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img src="/images/gallery3.jpg" class="card-img-top" alt="Logro 1">
+                            <div class="card-body">
+                                <p class="card-text">Campeones nacionales en patinaje artístico.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

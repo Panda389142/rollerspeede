@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<body>
+    <main layout:fragment="content">
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="mb-4">Gestión de Testimonios</h1>
+
+                    <!-- Botón para crear nuevo testimonio -->
+                    <div class="mb-3">
+                        <a th:href="@{/admin/testimonios/nuevo}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Nuevo Testimonio
+                        </a>
+                    </div>
+
+                    <!-- Lista de testimonios -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Testimonios</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Comentario</th>
+                                            <th>Fecha Creación</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="testimonio : ${testimonios}">
+                                            <td th:text="${testimonio.id}">1</td>
+                                            <td th:text="${testimonio.nombre}">Nombre</td>
+                                            <td th:text="${testimonio.comentario}">Comentario</td>
+                                            <td th:text="${#temporals.format(testimonio.fechaCreacion, 'dd/MM/yyyy HH:mm')}">Fecha</td>
+                                            <td>
+                                                <span class="badge" th:classappend="${testimonio.activo} ? 'bg-success' : 'bg-secondary'"
+                                                      th:text="${testimonio.activo} ? 'Activo' : 'Inactivo'">Estado</span>
+                                            </td>
+                                            <td>
+                                                <a th:href="@{/admin/testimonios/editar/{id}(id=${testimonio.id})}" class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-edit"></i> Editar
+                                                </a>
+                                                <form th:action="@{/admin/testimonios/eliminar/{id}(id=${testimonio.id})}" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-danger"
+                                                            onclick="return confirm('¿Estás seguro de eliminar este testimonio?')">
+                                                        <i class="fas fa-trash"></i> Eliminar
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

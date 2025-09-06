@@ -1,11 +1,14 @@
 package com.rollerspeed.rollerspeed.controller;
 
-import com.rollerspeed.rollerspeed.model.Clase;
 import com.rollerspeed.rollerspeed.model.Usuario;
 import com.rollerspeed.rollerspeed.service.ClaseService;
 import com.rollerspeed.rollerspeed.service.UsuarioService;
+import com.rollerspeed.rollerspeed.service.TestimonioService;
+import com.rollerspeed.rollerspeed.service.NoticiaService;
+import com.rollerspeed.rollerspeed.service.EventoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -14,8 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.security.Principal;
 
 @Controller
 public class MainController {
@@ -26,9 +28,19 @@ public class MainController {
     @Autowired
     private ClaseService claseService;
 
+    @Autowired
+    private TestimonioService testimonioService;
+
+    @Autowired
+    private NoticiaService noticiaService;
+
+    @Autowired
+    private EventoService eventoService;
+
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("clases", claseService.listarClasesConCupo());
+        model.addAttribute("testimonios", testimonioService.listarTestimoniosActivos());
         return "index";
     }
 
@@ -51,17 +63,22 @@ public class MainController {
     }
 
     @GetMapping("/galeria")
-    public String galeria() {
+    public String galeria(Model model) {
+        // Para la galería, podríamos agregar lógica para listar imágenes/videos dinámicos
+        // Por ahora, mantenemos estático
         return "galeria";
     }
 
     @GetMapping("/testimonios")
-    public String testimonios() {
+    public String testimonios(Model model) {
+        model.addAttribute("testimonios", testimonioService.listarTestimoniosActivos());
         return "testimonios";
     }
 
     @GetMapping("/noticias")
-    public String noticias() {
+    public String noticias(Model model) {
+        model.addAttribute("noticias", noticiaService.listarNoticiasActivas());
+        model.addAttribute("eventos", eventoService.listarEventosFuturos());
         return "noticias";
     }
 
@@ -118,6 +135,7 @@ public class MainController {
     }
     // ...
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'INSTRUCTOR', 'ALUMNO')")
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -145,6 +163,7 @@ public class MainController {
         return "dashboard";
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'INSTRUCTOR', 'ALUMNO')")
     @GetMapping("/perfil")
     public String perfil(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -157,26 +176,36 @@ public class MainController {
         return "perfil";
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'INSTRUCTOR', 'ALUMNO')")
     @PostMapping("/perfil/actualizar")
     public String actualizarPerfil(@Valid @ModelAttribute Usuario usuario,
                                   BindingResult result,
-                                  RedirectAttributes redirectAttributes) {
+                                  RedirectAttributes redirectAttributes,
+                                  Model model,
+                                  Principal principal) {
         if (result.hasErrors()) {
+            // Si hay errores, debemos recargar los datos del usuario para que la vista no falle.
+            // El objeto 'usuario' del formulario puede estar incompleto, así que obtenemos el original.
+            usuarioService.buscarPorEmail(principal.getName()).ifPresent(usuarioActual -> {
+                model.addAttribute("usuario", usuarioActual);
+            });
             return "perfil";
         }
 
         try {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String email = auth.getName();
+            String email = principal.getName();
 
-            usuarioService.buscarPorEmail(email).ifPresent(usuarioExistente -> {
-                usuarioExistente.setNombre(usuario.getNombre());
-                usuarioExistente.setTelefono(usuario.getTelefono());
-                usuarioExistente.setFechaNacimiento(usuario.getFechaNacimiento());
-                usuarioExistente.setGenero(usuario.getGenero());
-                usuarioExistente.setMedioPago(usuario.getMedioPago());
-                usuarioService.actualizarUsuario(usuarioExistente);
-            });
+            Usuario usuarioExistente = usuarioService.buscarPorEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            // Preservar datos no modificables
+            usuario.setId(usuarioExistente.getId());
+            usuario.setEmail(usuarioExistente.getEmail());
+            usuario.setPassword(usuarioExistente.getPassword());
+            usuario.setRol(usuarioExistente.getRol());
+            usuario.setActivo(usuarioExistente.getActivo());
+
+            usuarioService.actualizarUsuario(usuario);
 
             redirectAttributes.addFlashAttribute("mensaje", "Perfil actualizado correctamente");
         } catch (Exception e) {
@@ -184,19 +213,5 @@ public class MainController {
         }
 
         return "redirect:/perfil";
-    }
-
-    @PostMapping("/inscribir-clase/{claseId}")
-    @ResponseBody
-    public String inscribirClase(@PathVariable Long claseId) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-
-        return usuarioService.buscarPorEmail(email)
-                .map(usuario -> {
-                    boolean exito = claseService.inscribirAlumno(claseId, usuario);
-                    return exito ? "success" : "error";
-                })
-                .orElse("error");
     }
 }

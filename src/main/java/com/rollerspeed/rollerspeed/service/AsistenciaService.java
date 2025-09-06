@@ -3,6 +3,8 @@ package com.rollerspeed.rollerspeed.service;
 import com.rollerspeed.rollerspeed.model.Asistencia;
 import com.rollerspeed.rollerspeed.model.Clase;
 import com.rollerspeed.rollerspeed.model.Usuario;
+import com.rollerspeed.rollerspeed.repository.ClaseRepository;
+import com.rollerspeed.rollerspeed.repository.UsuarioRepository;
 import com.rollerspeed.rollerspeed.repository.AsistenciaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,12 @@ public class AsistenciaService {
 
     @Autowired
     private AsistenciaRepository asistenciaRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ClaseRepository claseRepository;
 
     public Asistencia registrarAsistencia(Asistencia asistencia) {
         // Verificar si ya existe una asistencia para el mismo alumno, clase y fecha
@@ -76,8 +84,22 @@ public class AsistenciaService {
 
     public void marcarAsistencia(Long alumnoId, Long claseId, LocalDate fecha, boolean presente, 
                                 String observaciones, Usuario registradoPor) {
-        // This would need to be implemented with proper entity retrieval
-        // For now, this is a placeholder for the logic
+        Usuario alumno = usuarioRepository.findById(alumnoId)
+                .orElseThrow(() -> new IllegalArgumentException("Alumno no encontrado"));
+        Clase clase = claseRepository.findById(claseId)
+                .orElseThrow(() -> new IllegalArgumentException("Clase no encontrada"));
+
+        Optional<Asistencia> asistenciaOpt = asistenciaRepository.findByAlumnoAndClaseAndFecha(alumno, clase, fecha);
+
+        Asistencia asistencia = asistenciaOpt.orElse(new Asistencia());
+        asistencia.setAlumno(alumno);
+        asistencia.setClase(clase);
+        asistencia.setFecha(fecha);
+        asistencia.setPresente(presente);
+        asistencia.setObservaciones(observaciones);
+        asistencia.setRegistradoPor(registradoPor);
+
+        asistenciaRepository.save(asistencia);
     }
 
     public boolean actualizarAsistencia(Long asistenciaId, boolean presente, String observaciones) {

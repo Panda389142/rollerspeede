@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Mi Perfil - RollerSpeed</title>
+</head>
+<body>
+    <main layout:fragment="content">
+        <div class="container-fluid py-4">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-md-3 col-lg-2">
+                    <div class="sidebar p-3">
+                        <div class="text-center mb-4">
+                            <img src="/images/user-avatar.png" alt="Avatar" class="rounded-circle mb-2"
+                                 width="80" height="80">
+                            <h6 th:text="${usuario.nombre ?: 'Usuario'}">Usuario</h6>
+                            <small class="text-muted" th:text="${usuario.rol?.name() ?: 'Rol'}">Rol</small>
+                        </div>
+
+                        <nav class="nav flex-column">
+                            <a class="nav-link" th:href="@{/dashboard}">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                            <a class="nav-link active" th:href="@{/perfil}">
+                                <i class="fas fa-user-edit"></i> Mi Perfil
+                            </a>
+                            <hr>
+                            <a class="nav-link" th:href="@{/servicios}">
+                                <i class="fas fa-calendar-plus"></i> Ver Clases
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Contenido Principal -->
+                <div class="col-md-9 col-lg-10">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1 class="h3">
+                            <i class="fas fa-user-edit"></i> Mi Perfil
+                        </h1>
+                        <div class="text-muted">
+                            <i class="fas fa-calendar-day"></i>
+                            <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy')}">Fecha</span>
+                        </div>
+                    </div>
+
+                    <!-- Información del Perfil -->
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-user"></i> Información Personal</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form th:action="@{/perfil/actualizar}" method="post" th:object="${usuario}">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="nombre" class="form-label">Nombre Completo</label>
+                                                <input type="text" class="form-control" id="nombre" name="nombre"
+                                                       th:value="${usuario.nombre}" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="email" class="form-label">Correo Electrónico</label>
+                                                <input type="email" class="form-control" id="email" name="email"
+                                                       th:value="${usuario.email}" readonly>
+                                                <div class="form-text">El email no se puede modificar</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="telefono" class="form-label">Teléfono</label>
+                                                <input type="tel" class="form-control" id="telefono" name="telefono"
+                                                       th:value="${usuario.telefono}" pattern="^[0-9]{10,15}$"
+                                                       title="Ingrese un número de teléfono válido (10-15 dígitos)">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+                                                <input type="text" class="form-control" id="fechaNacimiento" name="fechaNacimiento"
+                                                       th:value="${#temporals.format(usuario.fechaNacimiento, 'dd/MM/yyyy')}" readonly>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="genero" class="form-label">Género</label>
+                                                <input type="text" class="form-control" id="genero" name="genero"
+                                                       th:value="${usuario.genero?.name()}" readonly>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="medioPago" class="form-label">Medio de Pago Preferido</label>
+                                                <select class="form-select" id="medioPago" name="medioPago" required>
+                                                    <option value="EFECTIVO" th:selected="${usuario.medioPago.name() == 'EFECTIVO'}">Efectivo</option>
+                                                    <option value="TARJETA_CREDITO" th:selected="${usuario.medioPago.name() == 'TARJETA_CREDITO'}">Tarjeta de Crédito</option>
+                                                    <option value="TARJETA_DEBITO" th:selected="${usuario.medioPago.name() == 'TARJETA_DEBITO'}">Tarjeta de Débito</option>
+                                                    <option value="PSE" th:selected="${usuario.medioPago.name() == 'PSE'}">PSE</option>
+                                                    <option value="NEQUI" th:selected="${usuario.medioPago.name() == 'NEQUI'}">Nequi</option>
+                                                    <option value="DAVIPLATA" th:selected="${usuario.medioPago.name() == 'DAVIPLATA'}">Daviplata</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Rol</label>
+                                                <input type="text" class="form-control" th:value="${usuario.rol?.name()}" readonly>
+                                                <div class="form-text">El rol es asignado por el administrador</div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Estado</label>
+                                                <span class="badge" th:classappend="${usuario.activo} ? 'bg-success' : 'bg-danger'"
+                                                      th:text="${usuario.activo} ? 'Activo' : 'Inactivo'"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Fecha de Registro</label>
+                                            <input type="text" class="form-control"
+                                                   th:value="${#temporals.format(usuario.fechaRegistro, 'dd/MM/yyyy HH:mm')}" readonly>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i> Actualizar Perfil
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información Adicional -->
+                        <div class="col-lg-4">
+                            <!-- Estadísticas -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-chart-bar"></i> Estadísticas</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <div class="border-end">
+                                            <h4 class="text-primary" th:text="${usuario.clases != null ? #sets.size(usuario.clases) : 0}">0</h4>
+                                                <small class="text-muted">Clases Inscritas</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <h4 class="text-success">0</h4>
+                                            <small class="text-muted">Clases Completadas</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Información de Seguridad -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-shield-alt"></i> Seguridad</h6>
+                                </div>
+                                <div class="card-body">
+                                    <button class="btn btn-outline-primary btn-sm w-100 mb-2" onclick="cambiarContrasena()">
+                                        <i class="fas fa-key"></i> Cambiar Contraseña
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm w-100" onclick="configurar2FA()">
+                                        <i class="fas fa-mobile-alt"></i> Configurar 2FA
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function cambiarContrasena() {
+            alert('Funcionalidad de cambio de contraseña próximamente disponible');
+        }
+
+        function configurar2FA() {
+            alert('Configuración de autenticación de dos factores próximamente disponible');
+        }
+
+        // Validación del formulario
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const telefono = document.getElementById('telefono').value;
+                    const telefonoRegex = /^[0-9]{10,15}$/;
+
+                    if (telefono && !telefonoRegex.test(telefono)) {
+                        e.preventDefault();
+                        alert('Por favor ingrese un número de teléfono válido (10-15 dígitos)');
+                        return false;
+                    }
+
+                    return true;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

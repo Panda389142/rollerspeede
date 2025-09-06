@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head><title>Noticias y Eventos - RollerSpeed</title></head>
+<body>
+    <main layout:fragment="content">
+        <section class="hero-section">
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col-12">
+                        <h1 class="display-4 fw-bold mb-4">Noticias y Eventos</h1>
+                        <p class="lead mb-4">
+                            Mantente informado sobre las últimas noticias y eventos de RollerSpeed
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Noticias -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row g-4" th:if="${noticias != null and not #lists.isEmpty(noticias)}">
+                    <div class="col-md-6 col-lg-4" th:each="noticia : ${noticias}">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${noticia.titulo}">Título de la noticia</h5>
+                                <p class="card-text" th:text="${noticia.contenido}">Contenido de la noticia</p>
+                                <small class="text-muted" th:text="${#temporals.format(noticia.fechaPublicacion, 'dd/MM/yyyy')}">Fecha</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center" th:if="${noticias == null or #lists.isEmpty(noticias)}">
+                    <p class="lead text-muted">No hay noticias disponibles en este momento.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Eventos -->
+        <section class="py-5 bg-light">
+            <div class="container">
+                <div class="row g-4" th:if="${eventos != null and not #lists.isEmpty(eventos)}">
+                    <div class="col-md-6 col-lg-4" th:each="evento : ${eventos}">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${evento.titulo}">Título del evento</h5>
+                                <p class="card-text" th:text="${evento.descripcion}">Descripción del evento</p>
+                                <small class="text-muted" th:text="${#temporals.format(evento.fechaEvento, 'dd/MM/yyyy HH:mm')}">Fecha y hora</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center" th:if="${eventos == null or #lists.isEmpty(eventos)}">
+                    <p class="lead text-muted">No hay eventos programados en este momento.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

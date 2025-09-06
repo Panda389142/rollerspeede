@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Objects;
 
 @Entity
 @Table(name = "usuarios")
@@ -155,6 +156,20 @@ public class Usuario implements UserDetails {
 
     public void setClases(Set<Clase> clases) {
         this.clases = clases;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Usuario usuario = (Usuario) o;
+        return id != null && Objects.equals(id, usuario.id);
+    }
+
+    @Override
+    public int hashCode() {
+        // Usamos una constante para objetos sin persistir (id == null)
+        return id != null ? Objects.hash(id) : getClass().hashCode();
     }
 
     // Enums

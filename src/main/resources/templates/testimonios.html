@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<body>
+    <main layout:fragment="content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col-12">
+                        <h1 class="display-4 fw-bold mb-4">Testimonios</h1>
+                        <p class="lead mb-4">
+                            Lo que dicen nuestros estudiantes sobre su experiencia en RollerSpeed
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonios -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row g-4" th:if="${testimonios != null and not #lists.isEmpty(testimonios)}">
+                    <div class="col-md-6 col-lg-4" th:each="testimonio : ${testimonios}">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <img src="/images/testimonial-default.jpg" alt="Testimonio"
+                                         class="rounded-circle" width="80" height="80">
+                                </div>
+                                <blockquote class="blockquote">
+                                    <p th:text="'"' + ${testimonio.comentario} + '"'">Comentario del testimonio</p>
+                                </blockquote>
+                                <footer class="blockquote-footer">
+                                    <span th:text="${testimonio.nombre}">Nombre del Testimonio</span>
+                                </footer>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center" th:if="${testimonios == null or #lists.isEmpty(testimonios)}">
+                    <div class="row g-4">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <div class="mb-3">
+                                        <img src="/images/testimonial-1.jpg" alt="Estudiante"
+                                             class="rounded-circle" width="80" height="80">
+                                    </div>
+                                    <blockquote class="blockquote">
+                                        <p>"RollerSpeed cambió mi vida. Llegué sin saber patinar y ahora compito a nivel nacional.
+                                           Los instructores son excepcionales."</p>
+                                    </blockquote>
+                                    <footer class="blockquote-footer">
+                                        María González, <cite title="Estudiante">Estudiante Avanzada</cite>
+                                    </footer>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <div class="mb-3">
+                                        <img src="/images/testimonial-2.jpg" alt="Padre de familia"
+                                             class="rounded-circle" width="80" height="80">
+                                    </div>
+                                    <blockquote class="blockquote">
+                                        <p>"Mi hijo encontró su pasión aquí. El ambiente es familiar y seguro.
+                                           Recomiendo RollerSpeed a todos los padres."</p>
+                                    </blockquote>
+                                    <footer class="blockquote-footer">
+                                        Carlos Mendoza, <cite title="Padre">Padre de Familia</cite>
+                                    </footer>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <div class="mb-3">
+                                        <img src="/images/testimonial-3.jpg" alt="Estudiante adulta"
+                                             class="rounded-circle" width="80" height="80">
+                                    </div>
+                                    <blockquote class="blockquote">
+                                        <p>"Nunca es tarde para aprender. A los 35 años decidí patinar y ha sido
+                                           una experiencia increíble. ¡Altamente recomendado!"</p>
+                                    </blockquote>
+                                    <footer class="blockquote-footer">
+                                        Ana Patricia Ruiz, <cite title="Estudiante">Estudiante Adulta</cite>
+                                    </footer>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="py-5 bg-primary text-white">
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="fw-bold mb-3">¿Quieres compartir tu experiencia?</h2>
+                        <p class="lead mb-4">
+                            Tu testimonio puede inspirar a otros estudiantes a unirse a nuestra comunidad.
+                        </p>
+                        <a th:href="@{/registro}" class="btn btn-light btn-lg">
+                            <i class="fas fa-user-plus"></i> ¡Únete a RollerSpeed!
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

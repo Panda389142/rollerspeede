@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Tomar Asistencia</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Tomar Asistencia - <span th:text="${clase.nombre}"></span></h2>
+                <p class.="card-subtitle mb-2 text-muted">Fecha: <span th:text="${#temporals.format(fecha, 'dd/MM/yyyy')}"></span></p>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/instructor/clases/{claseId}/asistencia(claseId=${clase.id})}" method="post">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Alumno</th>
+                            <th class="text-center">Presente</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="alumno : ${alumnos}">
+                            <td th:text="${alumno.nombre}">Nombre del Alumno</td>
+                            <td class="text-center">
+                                <div class="form-check d-flex justify-content-center">
+                                    <input class="form-check-input" type="checkbox" name="alumnosPresentes"
+                                           th:value="${alumno.id}"
+                                           th:checked="${#lists.contains(asistenciasHoy.![alumno.id], alumno.id) and #lists.contains(asistenciasHoy.?[presente].![alumno.id], alumno.id)}"/>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(alumnos)}">
+                            <td colspan="2" class="text-center">No hay alumnos inscritos en esta clase.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Guardar Asistencia</button>
+                        <a th:href="@{/dashboard}" class="btn btn-secondary">Volver al Dashboard</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
