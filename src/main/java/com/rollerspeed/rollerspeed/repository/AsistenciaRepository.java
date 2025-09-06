@@ -17,7 +17,8 @@ public interface AsistenciaRepository extends JpaRepository<Asistencia, Long> {
 
     Optional<Asistencia> findByAlumnoAndClaseAndFecha(Usuario alumno, Clase clase, LocalDate fecha);
 
-    List<Asistencia> findByAlumnoOrderByFechaDesc(Usuario alumno);
+    @Query("SELECT a FROM Asistencia a JOIN FETCH a.clase WHERE a.alumno = :alumno ORDER BY a.fecha DESC")
+    List<Asistencia> findByAlumnoOrderByFechaDesc(@Param("alumno") Usuario alumno);
 
     List<Asistencia> findByClaseOrderByFechaDesc(Clase clase);
 

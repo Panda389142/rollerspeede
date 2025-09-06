@@ -49,11 +49,15 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label for="capacidadMaxima" class="form-label">Capacidad Máxima</label>
                                 <input type="number" class="form-control" id="capacidadMaxima" th:field="*{capacidadMaxima}" required min="1">
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
+                                <label for="precio" class="form-label">Precio (opcional)</label>
+                                <input type="number" step="any" class="form-control" id="precio" th:field="*{precio}" min="0" placeholder="Ej: 50000">
+                            </div>
+                            <div class="col-md-4 mb-3">
                                 <label for="instructor" class="form-label">Instructor</label>
                                 <select class="form-select" id="instructor" th:field="*{instructor}" required>
                                     <option value="">Seleccione un instructor</option>

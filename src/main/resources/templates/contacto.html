@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Contacto - RollerSpeed</title>
+</head>
+<body>
+    <main layout:fragment="content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container text-center">
+                <h1 class="display-4 fw-bold mb-4">Contáctanos</h1>
+                <p class="lead mb-4">
+                    ¿Tienes alguna pregunta o comentario? Estamos aquí para ayudarte.
+                </p>
+            </div>
+        </section>
+
+        <!-- Formulario y Datos de Contacto -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row g-5">
+                    <!-- Formulario de Contacto -->
+                    <div class="col-lg-7">
+                        <h3 class="mb-4">Envíanos un Mensaje</h3>
+                        <!-- La acción del formulario se puede conectar a un controlador en el futuro -->
+                        <form action="#" method="post">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="nombre" class="form-label">Tu Nombre</label>
+                                    <input type="text" class="form-control" id="nombre" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Tu Email</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                </div>
+                                <div class="col-12">
+                                    <label for="asunto" class="form-label">Asunto</label>
+                                    <input type="text" class="form-control" id="asunto" required>
+                                </div>
+                                <div class="col-12">
+                                    <label for="mensaje" class="form-label">Mensaje</label>
+                                    <textarea class="form-control" id="mensaje" rows="5" required></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane"></i> Enviar Mensaje
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Información de Contacto -->
+                    <div class="col-lg-5">
+                        <h3 class="mb-4">Información de Contacto</h3>
+                        <div class="p-4 bg-light rounded">
+                            <ul class="list-unstyled">
+                                <li class="d-flex mb-3 align-items-center">
+                                    <i class="fas fa-map-marker-alt fa-2x text-primary me-3"></i>
+                                    <div>
+                                        <strong>Dirección:</strong><br>
+                                        Calle 123 #45-67, Santa Marta, Colombia
+                                    </div>
+                                </li>
+                                <li class="d-flex mb-3 align-items-center">
+                                    <i class="fas fa-phone fa-2x text-primary me-3"></i>
+                                    <div>
+                                        <strong>Teléfono:</strong><br>
+                                        +57 300 123 4567
+                                    </div>
+                                </li>
+                                <li class="d-flex mb-3 align-items-center">
+                                    <i class="fas fa-envelope fa-2x text-primary me-3"></i>
+                                    <div>
+                                        <strong>Email:</strong><br>
+                                        info@rollerspeed.com
+                                    </div>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-clock fa-2x text-primary me-3"></i>
+                                    <div>
+                                        <strong>Horarios:</strong><br>
+                                        Lunes a Viernes: 6am - 10pm<br>
+                                        Sábados y Domingos: 7am - 8pm
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mapa -->
+        <section class="py-5 bg-light">
+            <div class="container text-center">
+                <h3 class="mb-4">Nuestra Ubicación</h3>
+                <div class="ratio ratio-16x9 shadow-lg rounded">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62664.70800081002!2d-74.24783284128417!3d11.236129399999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8ef4f5a0b1a0b3a7%3A0x4a6b3d2b0e0e0e0e!2sSanta%20Marta%2C%20Magdalena!5e0!3m2!1ses!2sco!4v1622058311542!5m2!1ses!2sco"
+                            style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

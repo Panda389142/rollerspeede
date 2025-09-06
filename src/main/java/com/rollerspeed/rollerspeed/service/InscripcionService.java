@@ -44,14 +44,16 @@ public class InscripcionService {
     }
 
     private void generarPagoPorInscripcion(Usuario alumno, Clase clase) {
-        Pago nuevoPago = new Pago();
-        nuevoPago.setAlumno(alumno);
-        nuevoPago.setClase(clase);
-        // Asumimos que la clase tiene un precio. Si no, puedes poner un valor por defecto.
-        nuevoPago.setMonto(clase.getPrecio() != null ? BigDecimal.valueOf(clase.getPrecio()) : BigDecimal.ZERO);
-        nuevoPago.setFechaGeneracion(LocalDate.now());
-        nuevoPago.setEstado(Pago.EstadoPago.PENDIENTE);
-        pagoRepository.save(nuevoPago);
+        // Solo generar un pago si la clase tiene un precio y es mayor a 0.
+        if (clase.getPrecio() != null && clase.getPrecio() > 0) {
+            Pago nuevoPago = new Pago();
+            nuevoPago.setAlumno(alumno);
+            nuevoPago.setClase(clase);
+            nuevoPago.setMonto(BigDecimal.valueOf(clase.getPrecio()));
+            nuevoPago.setFechaGeneracion(LocalDate.now());
+            nuevoPago.setEstado(Pago.EstadoPago.PENDIENTE);
+            pagoRepository.save(nuevoPago);
+        }
     }
 
     @Transactional

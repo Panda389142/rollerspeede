@@ -155,6 +155,7 @@ public class DataLoader implements CommandLineRunner {
             principiante.setCapacidadMaxima(15);
             principiante.setInstructor(instructor1);
             principiante.setActiva(true);
+            principiante.setPrecio(50000.0);
             claseRepository.save(principiante);
 
             // Clase intermedia
@@ -168,6 +169,7 @@ public class DataLoader implements CommandLineRunner {
             intermedio.setCapacidadMaxima(12);
             intermedio.setInstructor(instructor2);
             intermedio.setActiva(true);
+            intermedio.setPrecio(65000.0);
             claseRepository.save(intermedio);
 
             // Clase avanzada
@@ -181,6 +183,7 @@ public class DataLoader implements CommandLineRunner {
             avanzado.setCapacidadMaxima(8);
             avanzado.setInstructor(instructor1);
             avanzado.setActiva(true);
+            avanzado.setPrecio(80000.0);
             claseRepository.save(avanzado);
 
             // Clase competitiva
@@ -194,6 +197,7 @@ public class DataLoader implements CommandLineRunner {
             competitivo.setCapacidadMaxima(6);
             competitivo.setInstructor(instructor2);
             competitivo.setActiva(true);
+            competitivo.setPrecio(100000.0);
             claseRepository.save(competitivo);
 
             // Clase para niños
@@ -207,6 +211,7 @@ public class DataLoader implements CommandLineRunner {
             ninos.setCapacidadMaxima(20);
             ninos.setInstructor(instructor1);
             ninos.setActiva(true);
+            ninos.setPrecio(45000.0);
             claseRepository.save(ninos);
 
             // Clase de fin de semana
@@ -220,6 +225,7 @@ public class DataLoader implements CommandLineRunner {
             dominical.setCapacidadMaxima(25);
             dominical.setInstructor(instructor2);
             dominical.setActiva(true);
+            dominical.setPrecio(40000.0);
             claseRepository.save(dominical);
 
             System.out.println("Clases de prueba creadas exitosamente");

@@ -4,12 +4,17 @@ import com.rollerspeed.rollerspeed.model.Usuario;
 import com.rollerspeed.rollerspeed.service.ClaseService;
 import com.rollerspeed.rollerspeed.service.UsuarioService;
 import com.rollerspeed.rollerspeed.service.TestimonioService;
+import com.rollerspeed.rollerspeed.service.PagoService;
+import com.rollerspeed.rollerspeed.service.AsistenciaService;
 import com.rollerspeed.rollerspeed.service.NoticiaService;
 import com.rollerspeed.rollerspeed.service.EventoService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +27,8 @@ import java.security.Principal;
 @Controller
 public class MainController {
 
+    private static final Logger logger = LoggerFactory.getLogger(MainController.class);
+
     @Autowired
     private UsuarioService usuarioService;
 
@@ -30,6 +37,12 @@ public class MainController {
 
     @Autowired
     private TestimonioService testimonioService;
+
+    @Autowired
+    private PagoService pagoService;
+
+    @Autowired
+    private AsistenciaService asistenciaService;
 
     @Autowired
     private NoticiaService noticiaService;
@@ -178,40 +191,69 @@ public class MainController {
 
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'INSTRUCTOR', 'ALUMNO')")
     @PostMapping("/perfil/actualizar")
-    public String actualizarPerfil(@Valid @ModelAttribute Usuario usuario,
+    public String actualizarPerfil(@ModelAttribute Usuario usuarioForm,
                                   BindingResult result,
                                   RedirectAttributes redirectAttributes,
-                                  Model model,
-                                  Principal principal) {
-        if (result.hasErrors()) {
-            // Si hay errores, debemos recargar los datos del usuario para que la vista no falle.
-            // El objeto 'usuario' del formulario puede estar incompleto, así que obtenemos el original.
-            usuarioService.buscarPorEmail(principal.getName()).ifPresent(usuarioActual -> {
-                model.addAttribute("usuario", usuarioActual);
-            });
-            return "perfil";
-        }
-
+                                  Principal principal,
+                                  Authentication authentication) {
         try {
             String email = principal.getName();
 
-            Usuario usuarioExistente = usuarioService.buscarPorEmail(email)
+            // 1. Cargar el usuario actual desde la base de datos
+            Usuario usuarioActual = usuarioService.buscarPorEmail(email)
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            // Preservar datos no modificables
-            usuario.setId(usuarioExistente.getId());
-            usuario.setEmail(usuarioExistente.getEmail());
-            usuario.setPassword(usuarioExistente.getPassword());
-            usuario.setRol(usuarioExistente.getRol());
-            usuario.setActivo(usuarioExistente.getActivo());
+            // 2. Actualizar solo los campos que son editables en el formulario
+            usuarioActual.setNombre(usuarioForm.getNombre());
+            usuarioActual.setTelefono(usuarioForm.getTelefono());
 
-            usuarioService.actualizarUsuario(usuario);
+            // 3. Si el usuario es ADMINISTRADOR, permitir cambiar el método de pago
+            if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMINISTRADOR"))) {
+                usuarioActual.setMedioPago(usuarioForm.getMedioPago());
+            }
+
+            // 4. Guardar el usuario actualizado.
+            usuarioService.actualizarUsuario(usuarioActual);
 
             redirectAttributes.addFlashAttribute("mensaje", "Perfil actualizado correctamente");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al actualizar el perfil");
+            redirectAttributes.addFlashAttribute("error", "Error al actualizar el perfil: " + e.getMessage());
         }
 
         return "redirect:/perfil";
+    }
+
+    @PreAuthorize("hasRole('ALUMNO')")
+    @GetMapping("/historial-pagos")
+    public String historialPagos(Model model, Principal principal) {
+        String email = principal.getName();
+        usuarioService.buscarPorEmail(email).ifPresent(usuario -> {
+            model.addAttribute("pagos", pagoService.listarPagosPorAlumno(usuario));
+        });
+        return "alumno/historial-pagos";
+    }
+
+    @PreAuthorize("hasRole('ALUMNO')")
+    @GetMapping("/mi-asistencia")
+    public String miAsistencia(Model model, Principal principal) {
+        String email = principal.getName();
+        try {
+            usuarioService.buscarPorEmail(email).ifPresentOrElse(usuario -> {
+                model.addAttribute("asistencias", asistenciaService.listarAsistenciasPorAlumno(usuario));
+                model.addAttribute("porcentajeAsistencia", asistenciaService.calcularPorcentajeAsistencia(usuario.getId()));
+            }, () -> {
+                // En el caso improbable de que no se encuentre el usuario, se envían valores por defecto.
+                model.addAttribute("asistencias", java.util.Collections.emptyList());
+                model.addAttribute("porcentajeAsistencia", 0.0);
+                model.addAttribute("error", "No se pudo cargar la información del usuario.");
+            });
+        } catch (Exception e) {
+            logger.error("Error al cargar la página de asistencia para el usuario: {}", email, e);
+            // Capturamos cualquier excepción inesperada de los servicios para evitar que la página se rompa.
+            model.addAttribute("asistencias", java.util.Collections.emptyList());
+            model.addAttribute("porcentajeAsistencia", 0.0);
+            model.addAttribute("error", "Ocurrió un error al calcular tus estadísticas de asistencia. Por favor, contacta a soporte.");
+        }
+        return "alumno/mi-asistencia";
     }
 }

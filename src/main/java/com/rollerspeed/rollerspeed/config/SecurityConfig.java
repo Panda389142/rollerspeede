@@ -42,7 +42,8 @@ public class SecurityConfig {
                                "/images/**", "/webjars/**", "/sobre-nosotros", "/servicios",
                                "/galeria", "/noticias", "/contacto", "/testimonios").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
-                .requestMatchers("/dashboard", "/perfil", "/inscripcion/**").hasAnyRole("ALUMNO", "INSTRUCTOR", "ADMINISTRADOR")
+                .requestMatchers("/dashboard", "/perfil", "/inscripcion/**", "/historial-pagos", "/mi-asistencia")
+                    .hasAnyRole("ALUMNO", "INSTRUCTOR", "ADMINISTRADOR")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

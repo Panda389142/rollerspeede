@@ -93,7 +93,7 @@
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <label for="medioPago" class="form-label">Medio de Pago Preferido</label>
-                                                <select class="form-select" id="medioPago" name="medioPago" required>
+                                                <select class="form-select" id="medioPago" name="medioPago" th:disabled="${#authorization.expression('hasAnyRole(''ALUMNO'', ''INSTRUCTOR'')')}">
                                                     <option value="EFECTIVO" th:selected="${usuario.medioPago.name() == 'EFECTIVO'}">Efectivo</option>
                                                     <option value="TARJETA_CREDITO" th:selected="${usuario.medioPago.name() == 'TARJETA_CREDITO'}">Tarjeta de Crédito</option>
                                                     <option value="TARJETA_DEBITO" th:selected="${usuario.medioPago.name() == 'TARJETA_DEBITO'}">Tarjeta de Débito</option>
@@ -101,6 +101,7 @@
                                                     <option value="NEQUI" th:selected="${usuario.medioPago.name() == 'NEQUI'}">Nequi</option>
                                                     <option value="DAVIPLATA" th:selected="${usuario.medioPago.name() == 'DAVIPLATA'}">Daviplata</option>
                                                 </select>
+                                                <div class="form-text" th:if="${#authorization.expression('hasAnyRole(''ALUMNO'', ''INSTRUCTOR'')')}">Para cambiar tu método de pago, contacta a la administración.</div>
                                             </div>
                                         </div>
 
