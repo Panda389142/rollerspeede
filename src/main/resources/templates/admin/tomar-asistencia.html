@@ -28,8 +28,7 @@
                             <td class="text-center">
                                 <div class="form-check d-flex justify-content-center">
                                     <input class="form-check-input" type="checkbox" name="alumnosPresentes"
-                                           th:value="${alumno.id}"
-                                           th:checked="${#lists.contains(asistenciasHoy.![alumno.id], alumno.id) and #lists.contains(asistenciasHoy.?[presente].![alumno.id], alumno.id)}"/>
+                                           th:value="${alumno.id}" th:checked="${#lists.contains(presentesHoy, alumno.id)}"/>
                                 </div>
                             </td>
                         </tr>

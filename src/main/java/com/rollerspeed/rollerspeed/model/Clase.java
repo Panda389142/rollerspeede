@@ -47,7 +47,7 @@ public class Clase {
     @DecimalMin(value = "0.0", message = "El precio no puede ser negativo")
     private Double precio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "instructor_id")
     private Usuario instructor;
 

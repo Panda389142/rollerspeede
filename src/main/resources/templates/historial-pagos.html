@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <title>Historial de Pagos</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0"><i class="fas fa-file-invoice-dollar me-2"></i>Historial de Pagos</h2>
+            </div>
+            <div class="card-body">
+                <div th:if="${pagos == null or #lists.isEmpty(pagos)}">
+                    <div class="alert alert-info text-center" role="alert">
+                        No tienes pagos registrados por el momento.
+                    </div>
+                </div>
+
+                <div th:if="${pagos != null and not #lists.isEmpty(pagos)}" class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                        <tr>
+                            <th scope="col">ID del Pago</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col" class="text-end">Monto</th>
+                            <th scope="col" class="text-center">Estado</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="pago : ${pagos}">
+                            <td th:text="${pago.id}">123</td>
+                            <td th:text="${#temporals.format(pago.fechaGeneracion, 'dd/MM/yyyy')}">01/01/2025</td>
+                            <td th:text="${pago.descripcion}">Mensualidad Enero</td>
+                            <td class="text-end" th:text="${'$' + #numbers.formatDecimal(pago.monto, 1, 'POINT', 2, 'COMMA')}">$50.00</td>
+                            <td class="text-center">
+                                <span th:switch="${pago.estado.name()}">
+                                    <span th:case="'COMPLETADO'" class="badge bg-success">Completado</span>
+                                    <span th:case="'PENDIENTE'" class="badge bg-warning">Pendiente</span>
+                                    <span th:case="'CANCELADO'" class="badge bg-danger">Cancelado</span>
+                                    <span th:case="*" class="badge bg-secondary" th:text="${pago.estado}"></span>
+                                </span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                    <a th:href="@{/dashboard}" class="btn btn-secondary">Volver al Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

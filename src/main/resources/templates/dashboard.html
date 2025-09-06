@@ -284,6 +284,9 @@
                                                                         </button>                                                                        <a class="btn btn-sm btn-success" th:href="@{/instructor/clases/{id}/asistencia(id=${clase.id})}">
                                                                             <i class="fas fa-clipboard-check"></i> Asistencia
                                                                         </a>
+                                                                        <a class="btn btn-sm btn-info" th:href="@{/instructor/clases/{id}/asistencias/historial(id=${clase.id})}">
+                                                                            <i class="fas fa-history"></i> Ver Historial
+                                                                        </a>
                                                                     </td>
                                                                 </tr>
                                                             </tbody>

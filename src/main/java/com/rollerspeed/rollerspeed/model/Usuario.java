@@ -168,8 +168,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public int hashCode() {
-        // Usamos una constante para objetos sin persistir (id == null)
-        return id != null ? Objects.hash(id) : getClass().hashCode();
+        return Objects.hash(id);
     }
 
     // Enums

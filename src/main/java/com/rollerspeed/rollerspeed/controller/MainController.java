@@ -223,14 +223,14 @@ public class MainController {
         return "redirect:/perfil";
     }
 
-    @PreAuthorize("hasRole('ALUMNO')")
+    @PreAuthorize("hasAnyRole('ALUMNO', 'INSTRUCTOR', 'ADMINISTRADOR')")
     @GetMapping("/historial-pagos")
     public String historialPagos(Model model, Principal principal) {
         String email = principal.getName();
         usuarioService.buscarPorEmail(email).ifPresent(usuario -> {
             model.addAttribute("pagos", pagoService.listarPagosPorAlumno(usuario));
         });
-        return "alumno/historial-pagos";
+        return "historial-pagos";
     }
 
     @PreAuthorize("hasRole('ALUMNO')")
