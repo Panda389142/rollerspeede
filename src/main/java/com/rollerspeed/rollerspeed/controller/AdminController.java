@@ -39,6 +39,9 @@ public class AdminController {
     @Autowired
     private NotificacionService notificacionService;
 
+    @Autowired
+    private GaleriaItemService galeriaItemService;
+
     @GetMapping("/testimonios")
     public String listarTestimonios(Model model) {
         List<Testimonio> testimonios = testimonioService.listarTestimoniosActivos();
@@ -340,4 +343,44 @@ public class AdminController {
     public String listarReportes(Model model) {
         return "admin/reportes";
     }
+
+    // --- Gestión de Galería ---
+    @GetMapping("/galeria")
+    public String listarGaleria(Model model) {
+        List<GaleriaItem> items = galeriaItemService.findAll();
+        model.addAttribute("items", items);
+        return "admin/galeria";
+    }
+
+    @GetMapping("/galeria/nuevo")
+    public String mostrarFormularioGaleria(Model model) {
+        model.addAttribute("item", new GaleriaItem());
+        return "admin/galeria-form";
+    }
+
+    @PostMapping("/galeria/guardar")
+    public String guardarGaleriaItem(@Valid @ModelAttribute("item") GaleriaItem item,
+                                     BindingResult result,
+                                     RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return "admin/galeria-form";
+        }
+        galeriaItemService.save(item);
+        redirectAttributes.addFlashAttribute("mensaje", "Elemento de galería guardado exitosamente.");
+        return "redirect:/admin/galeria";
+    }
+
+    @GetMapping("/galeria/editar/{id}")
+    public String mostrarFormularioEditarGaleriaItem(@PathVariable Long id, Model model) {
+        galeriaItemService.findById(id).ifPresent(item -> model.addAttribute("item", item));
+        return "admin/galeria-form";
+    }
+
+    @PostMapping("/galeria/eliminar/{id}")
+    public String eliminarGaleriaItem(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        galeriaItemService.deleteById(id);
+        redirectAttributes.addFlashAttribute("mensaje", "Elemento de galería eliminado correctamente.");
+        return "redirect:/admin/galeria";
+    }
+
 }

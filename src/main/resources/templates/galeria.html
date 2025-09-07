@@ -16,31 +16,29 @@
 
         <section class="py-5">
             <div class="container">
-                <div class="row g-4">
-                    <!-- Example static images, replace with dynamic content as needed -->
-                    <div class="col-md-4">
-                        <div class="card">
-                            <img src="/images/gallery1.jpg" class="card-img-top" alt="Entrenamiento 1">
+                <div class="row g-4" th:if="${items != null and not #lists.isEmpty(items)}">
+                    <div class="col-md-4" th:each="item : ${items}">
+                        <div class="card h-100">
+                            <div th:if="${item.tipo == T(com.rollerspeed.rollerspeed.model.GaleriaItem.Tipo).FOTO}">
+                                <img th:src="${item.imageUrl}" class="card-img-top" th:alt="${item.titulo}">
+                            </div>
+                            <div th:if="${item.tipo == T(com.rollerspeed.rollerspeed.model.GaleriaItem.Tipo).VIDEO}">
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <iframe class="embed-responsive-item" th:src="${item.videoUrl}" allowfullscreen></iframe>
+                                </div>
+                            </div>
                             <div class="card-body">
-                                <p class="card-text">Entrenamiento intensivo de velocidad.</p>
+                                <h5 class="card-title" th:text="${item.titulo}"></h5>
+                                <p class="card-text" th:text="${item.descripcion}"></p>
+                                <small class="text-muted" th:text="${#temporals.format(item.fechaCreacion, 'dd/MM/yyyy')}"></small>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card">
-                            <img src="/images/gallery2.jpg" class="card-img-top" alt="Evento 1">
-                            <div class="card-body">
-                                <p class="card-text">Competencia regional 2024.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card">
-                            <img src="/images/gallery3.jpg" class="card-img-top" alt="Logro 1">
-                            <div class="card-body">
-                                <p class="card-text">Campeones nacionales en patinaje artístico.</p>
-                            </div>
-                        </div>
+                </div>
+                <div class="text-center" th:if="${items == null or #lists.isEmpty(items)}">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        No hay elementos en la galería aún. ¡Pronto tendremos más contenido!
                     </div>
                 </div>
             </div>

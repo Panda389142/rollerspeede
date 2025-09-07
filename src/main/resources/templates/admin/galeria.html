@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<body>
+<main layout:fragment="content">
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Gestionar Galería</h1>
+            <a th:href="@{/admin/galeria/nuevo}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nuevo Elemento
+            </a>
+        </div>
+
+        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Título</th>
+                        <th>Tipo</th>
+                        <th>Fecha de Creación</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${items}">
+                        <td><img th:src="${item.imageUrl}" alt="" width="100"></td>
+                        <td th:text="${item.titulo}"></td>
+                        <td th:text="${item.tipo}"></td>
+                        <td th:text="${#temporals.format(item.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td>
+                            <a th:href="@{/admin/galeria/editar/{id}(id=${item.id})}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form th:action="@{/admin/galeria/eliminar/{id}(id=${item.id})}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que quieres eliminar este elemento?');">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

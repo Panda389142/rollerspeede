@@ -78,13 +78,6 @@ public class MainController {
         return "servicios";
     }
 
-    @GetMapping("/galeria")
-    public String galeria(Model model) {
-        // Para la galería, podríamos agregar lógica para listar imágenes/videos dinámicos
-        // Por ahora, mantenemos estático
-        return "galeria";
-    }
-
     @GetMapping("/testimonios")
     public String testimonios(Model model) {
         model.addAttribute("testimonios", testimonioService.listarTestimoniosActivos());
