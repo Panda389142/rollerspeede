@@ -11,8 +11,8 @@ import java.util.List;
 
 @Repository
 public interface PagoRepository extends JpaRepository<Pago, Long> {
-    @Query("SELECT p FROM Pago p LEFT JOIN FETCH p.clase WHERE p.alumno = :alumno ORDER BY p.fechaGeneracion DESC")
-    List<Pago> findByAlumno(@Param("alumno") Usuario alumno);
+    @Query("SELECT p FROM Pago p LEFT JOIN FETCH p.clase WHERE p.usuario = :usuario ORDER BY p.fechaGeneracion DESC")
+    List<Pago> findByUsuario(@Param("usuario") Usuario usuario);
 
     List<Pago> findByEstado(Pago.EstadoPago estado);
 

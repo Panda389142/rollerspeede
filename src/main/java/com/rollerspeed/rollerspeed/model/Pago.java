@@ -16,9 +16,9 @@ public class Pago {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "alumno_id", nullable = false)
-    @NotNull(message = "El alumno es obligatorio")
-    private Usuario alumno;
+    @JoinColumn(name = "usuario_id", nullable = false)
+    @NotNull(message = "El usuario es obligatorio")
+    private Usuario usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clase_id")
@@ -33,8 +33,15 @@ public class Pago {
     @Column(nullable = false)
     private EstadoPago estado = EstadoPago.PENDIENTE;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Usuario.MedioPago medioPago;
+
     @Column(nullable = false)
     private LocalDate fechaGeneracion = LocalDate.now();
+
+    @Column
+    private LocalDateTime fechaPago;
 
     @Column(columnDefinition = "TEXT")
     private String descripcion;
@@ -42,8 +49,8 @@ public class Pago {
     // Constructores
     public Pago() {}
 
-    public Pago(Usuario alumno, BigDecimal monto, String descripcion) {
-        this.alumno = alumno;
+    public Pago(Usuario usuario, BigDecimal monto, String descripcion) {
+        this.usuario = usuario;
         this.monto = monto;
         this.descripcion = descripcion;
     }
@@ -52,8 +59,8 @@ public class Pago {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public Usuario getAlumno() { return alumno; }
-    public void setAlumno(Usuario alumno) { this.alumno = alumno; }
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 
     public Clase getClase() { return clase; }
     public void setClase(Clase clase) { this.clase = clase; }
@@ -64,8 +71,14 @@ public class Pago {
     public EstadoPago getEstado() { return estado; }
     public void setEstado(EstadoPago estado) { this.estado = estado; }
 
+    public Usuario.MedioPago getMedioPago() { return medioPago; }
+    public void setMedioPago(Usuario.MedioPago medioPago) { this.medioPago = medioPago; }
+
     public LocalDate getFechaGeneracion() { return fechaGeneracion; }
     public void setFechaGeneracion(LocalDate fechaGeneracion) { this.fechaGeneracion = fechaGeneracion; }
+
+    public LocalDateTime getFechaPago() { return fechaPago; }
+    public void setFechaPago(LocalDateTime fechaPago) { this.fechaPago = fechaPago; }
 
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }

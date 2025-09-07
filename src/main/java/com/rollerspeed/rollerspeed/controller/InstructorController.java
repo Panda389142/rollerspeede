@@ -66,8 +66,8 @@ public class InstructorController {
         List<Long> presentesHoy = new ArrayList<>();
         if (clase.getAsistencias() != null) {
             presentesHoy = clase.getAsistencias().stream()
-                    .filter(a -> a.getFecha().equals(hoy) && a.getPresente() && a.getAlumno() != null)
-                    .map(a -> a.getAlumno().getId())
+                    .filter(a -> a.getFecha().equals(hoy) && a.getPresente() && a.getUsuario() != null)
+                    .map(a -> a.getUsuario().getId())
                     .collect(Collectors.toList());
         }
         model.addAttribute("presentesHoy", presentesHoy);
@@ -85,7 +85,7 @@ public class InstructorController {
                 .orElseThrow(() -> new IllegalArgumentException("Clase no encontrada"));
         Usuario instructor = usuarioService.buscarPorEmail(principal.getName()).orElseThrow();
 
-        for (Long alumnoId : clase.getAlumnos().stream().map(Usuario::getId).toList()) {
+        for (Long alumnoId : clase.getAlumnos().stream().map(Usuario::getId).collect(Collectors.toList())) {
             boolean presente = alumnosPresentes != null && alumnosPresentes.contains(alumnoId);
             // Usamos el método que ya tienes en tu AsistenciaService
             asistenciaService.marcarAsistencia(alumnoId, claseId, LocalDate.now(), presente, "", instructor);
@@ -121,7 +121,7 @@ public class InstructorController {
 
         // Agrupar asistencias por alumno
         Map<Usuario, List<Asistencia>> asistenciasPorAlumno = asistencias.stream()
-                .collect(Collectors.groupingBy(Asistencia::getAlumno));
+                .collect(Collectors.groupingBy(Asistencia::getUsuario));
 
         model.addAttribute("clase", clase);
         model.addAttribute("asistenciasPorAlumno", asistenciasPorAlumno);

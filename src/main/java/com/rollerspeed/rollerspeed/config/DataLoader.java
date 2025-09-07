@@ -17,39 +17,59 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private static final Logger logger = LoggerFactory.getLogger(DataLoader.class);
 
-    @Autowired
-    private ClaseRepository claseRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final ClaseRepository claseRepository;
+    private final TestimonioRepository testimonioRepository;
+    private final NoticiaRepository noticiaRepository;
+    private final EventoRepository eventoRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private TestimonioRepository testimonioRepository;
-
-    @Autowired
-    private NoticiaRepository noticiaRepository;
-
-    @Autowired
-    private EventoRepository eventoRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    // Constructor injection para evitar referencias circulares
+    public DataLoader(UsuarioRepository usuarioRepository,
+                     ClaseRepository claseRepository,
+                     TestimonioRepository testimonioRepository,
+                     NoticiaRepository noticiaRepository,
+                     EventoRepository eventoRepository,
+                     PasswordEncoder passwordEncoder) {
+        this.usuarioRepository = usuarioRepository;
+        this.claseRepository = claseRepository;
+        this.testimonioRepository = testimonioRepository;
+        this.noticiaRepository = noticiaRepository;
+        this.eventoRepository = eventoRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
-        // Crear usuarios de prueba si no existen
-        crearUsuariosDePrueba();
-        crearClasesDePrueba();
-        crearTestimoniosDePrueba();
-        crearNoticiasDePrueba();
-        crearEventosDePrueba();
+        logger.info("Iniciando carga de datos de prueba...");
+        try {
+            // Crear usuarios de prueba si no existen
+            crearUsuariosDePrueba();
+            crearClasesDePrueba();
+            crearTestimoniosDePrueba();
+            crearNoticiasDePrueba();
+            crearEventosDePrueba();
+            logger.info("Carga de datos de prueba finalizada exitosamente.");
+        } catch (Exception e) {
+            logger.error("Error durante la carga de datos de prueba: ", e);
+            throw e;
+        }
     }
 
     private void crearUsuariosDePrueba() {
+        logger.info("Creando usuarios de prueba...");
+        
         // Crear administrador
         if (!usuarioRepository.existsByEmail("admin@rollerspeed.com")) {
             Usuario admin = new Usuario();
@@ -63,7 +83,7 @@ public class DataLoader implements CommandLineRunner {
             admin.setRol(Usuario.Rol.ADMINISTRADOR);
             admin.setActivo(true);
             usuarioRepository.save(admin);
-            System.out.println("Administrador creado: admin@rollerspeed.com / admin123");
+            logger.info("Administrador creado: admin@rollerspeed.com / admin123");
         }
 
         // Crear instructor
@@ -79,7 +99,7 @@ public class DataLoader implements CommandLineRunner {
             instructor.setRol(Usuario.Rol.INSTRUCTOR);
             instructor.setActivo(true);
             usuarioRepository.save(instructor);
-            System.out.println("Instructor creado: instructor@rollerspeed.com / instructor123");
+            logger.info("Instructor creado: instructor@rollerspeed.com / instructor123");
         }
 
         // Crear otro instructor
@@ -95,7 +115,7 @@ public class DataLoader implements CommandLineRunner {
             instructor2.setRol(Usuario.Rol.INSTRUCTOR);
             instructor2.setActivo(true);
             usuarioRepository.save(instructor2);
-            System.out.println("Instructor creado: maria.instructor@rollerspeed.com / maria123");
+            logger.info("Instructor creado: maria.instructor@rollerspeed.com / maria123");
         }
 
         // Crear alumno de prueba
@@ -111,7 +131,7 @@ public class DataLoader implements CommandLineRunner {
             alumno.setRol(Usuario.Rol.ALUMNO);
             alumno.setActivo(true);
             usuarioRepository.save(alumno);
-            System.out.println("Alumno creado: alumno@test.com / alumno123");
+            logger.info("Alumno creado: alumno@test.com / alumno123");
         }
 
         // Crear más alumnos de prueba
@@ -127,113 +147,143 @@ public class DataLoader implements CommandLineRunner {
             alumno2.setRol(Usuario.Rol.ALUMNO);
             alumno2.setActivo(true);
             usuarioRepository.save(alumno2);
+            logger.info("Alumno creado: juan@test.com / juan123");
         }
     }
 
     private void crearClasesDePrueba() {
-        // Verificar que existan instructores
-        var instructores = usuarioRepository.findByRol(Usuario.Rol.INSTRUCTOR);
-        if (instructores.isEmpty()) {
-            System.out.println("No se pueden crear clases: no hay instructores disponibles");
-            return;
-        }
+        // Para desarrollo: Limpiamos y volvemos a crear las clases para asegurar datos frescos.
+        // En producción, esta lógica debería ser más cuidadosa.
 
-        Usuario instructor1 = instructores.get(0);
-        Usuario instructor2 = instructores.size() > 1 ? instructores.get(1) : instructor1;
-
-        // Crear clases de prueba
-        if (claseRepository.count() == 0) {
+        if (claseRepository.count() == 0) { // Only create if no classes exist
+            logger.info("Creando nuevas clases de prueba...");
             
-            // Clase para principiantes
-            Clase principiante = new Clase();
-            principiante.setNombre("Patinaje Principiante");
-            principiante.setDescripcion("Clase ideal para quienes están empezando en el mundo del patinaje. Aprenderás las técnicas básicas de equilibrio y movimiento.");
-            principiante.setNivel(Clase.Nivel.PRINCIPIANTE);
-            principiante.setDiaSemana(Clase.DiaSemana.LUNES);
-            principiante.setHoraInicio(LocalTime.of(10, 0));
-            principiante.setHoraFin(LocalTime.of(11, 30));
-            principiante.setCapacidadMaxima(15);
-            principiante.setInstructor(instructor1);
-            principiante.setActiva(true);
-            principiante.setPrecio(50000.0);
-            claseRepository.save(principiante);
+            // Buscar instructores
+            Usuario instructor1 = usuarioRepository.findByEmail("instructor@rollerspeed.com").orElse(null);
+            Usuario instructor2 = usuarioRepository.findByEmail("maria.instructor@rollerspeed.com").orElse(null);
+            
+            if (instructor1 == null || instructor2 == null) {
+                logger.warn("No se pueden crear clases: instructores no disponibles");
+                return;
+            }
 
-            // Clase intermedia
-            Clase intermedio = new Clase();
-            intermedio.setNombre("Patinaje Intermedio");
-            intermedio.setDescripcion("Para estudiantes que ya dominan los fundamentos. Trabajaremos técnicas más avanzadas y coreografías básicas.");
-            intermedio.setNivel(Clase.Nivel.INTERMEDIO);
-            intermedio.setDiaSemana(Clase.DiaSemana.MIERCOLES);
-            intermedio.setHoraInicio(LocalTime.of(14, 0));
-            intermedio.setHoraFin(LocalTime.of(15, 30));
-            intermedio.setCapacidadMaxima(12);
-            intermedio.setInstructor(instructor2);
-            intermedio.setActiva(true);
-            intermedio.setPrecio(65000.0);
-            claseRepository.save(intermedio);
+            try {
+                // Clase 1 - Principiantes
+                Clase clase1 = new Clase();
+                clase1.setNombre("Patinaje Básico para Principiantes");
+                clase1.setDescripcion("Aprende los fundamentos del patinaje en línea. Perfecto para quienes nunca han patinado.");
+                clase1.setNivel(Clase.Nivel.PRINCIPIANTE);
+                clase1.setDiaSemana(Clase.DiaSemana.LUNES);
+                clase1.setHoraInicio(LocalTime.of(18, 0)); // 6:00 PM
+                clase1.setHoraFin(LocalTime.of(19, 0));    // 7:00 PM
+                clase1.setCapacidadMaxima(15);
+                clase1.setPrecio(50000.0);
+                clase1.setInstructor(instructor1);
+                clase1.setActiva(true);
+                claseRepository.save(clase1);
+                logger.info("Clase creada: {} - Precio: ${}", clase1.getNombre(), clase1.getPrecio());
 
-            // Clase avanzada
-            Clase avanzado = new Clase();
-            avanzado.setNombre("Patinaje Avanzado");
-            avanzado.setDescripcion("Nivel avanzado con técnicas complejas, saltos y preparación para competencias.");
-            avanzado.setNivel(Clase.Nivel.AVANZADO);
-            avanzado.setDiaSemana(Clase.DiaSemana.VIERNES);
-            avanzado.setHoraInicio(LocalTime.of(16, 0));
-            avanzado.setHoraFin(LocalTime.of(18, 0));
-            avanzado.setCapacidadMaxima(8);
-            avanzado.setInstructor(instructor1);
-            avanzado.setActiva(true);
-            avanzado.setPrecio(80000.0);
-            claseRepository.save(avanzado);
+                // Clase 2 - Intermedio
+                Clase clase2 = new Clase();
+                clase2.setNombre("Patinaje Artístico Intermedio");
+                clase2.setDescripcion("Técnicas avanzadas de patinaje artístico. Requiere experiencia previa.");
+                clase2.setNivel(Clase.Nivel.INTERMEDIO);
+                clase2.setDiaSemana(Clase.DiaSemana.MIERCOLES);
+                clase2.setHoraInicio(LocalTime.of(19, 30)); // 7:30 PM
+                clase2.setHoraFin(LocalTime.of(21, 0));     // 9:00 PM
+                clase2.setCapacidadMaxima(10);
+                clase2.setPrecio(75000.0);
+                clase2.setInstructor(instructor2);
+                clase2.setActiva(true);
+                claseRepository.save(clase2);
+                logger.info("Clase creada: {} - Precio: ${}", clase2.getNombre(), clase2.getPrecio());
 
-            // Clase competitiva
-            Clase competitivo = new Clase();
-            competitivo.setNombre("Patinaje Competitivo");
-            competitivo.setDescripcion("Preparación intensiva para competencias nacionales e internacionales. Solo para patinadores experimentados.");
-            competitivo.setNivel(Clase.Nivel.COMPETITIVO);
-            competitivo.setDiaSemana(Clase.DiaSemana.SABADO);
-            competitivo.setHoraInicio(LocalTime.of(8, 0));
-            competitivo.setHoraFin(LocalTime.of(10, 0));
-            competitivo.setCapacidadMaxima(6);
-            competitivo.setInstructor(instructor2);
-            competitivo.setActiva(true);
-            competitivo.setPrecio(100000.0);
-            claseRepository.save(competitivo);
+                // Clase 3 - Velocidad
+                Clase clase3 = new Clase();
+                clase3.setNombre("Patinaje de Velocidad");
+                clase3.setDescripcion("Entrena tu velocidad y resistencia en el patinaje. Para nivel intermedio-avanzado.");
+                clase3.setNivel(Clase.Nivel.AVANZADO);
+                clase3.setDiaSemana(Clase.DiaSemana.VIERNES);
+                clase3.setHoraInicio(LocalTime.of(17, 0)); // 5:00 PM
+                clase3.setHoraFin(LocalTime.of(19, 0));    // 7:00 PM
+                clase3.setCapacidadMaxima(12);
+                clase3.setPrecio(80000.0);
+                clase3.setInstructor(instructor1);
+                clase3.setActiva(true);
+                claseRepository.save(clase3);
+                logger.info("Clase creada: {} - Precio: ${}", clase3.getNombre(), clase3.getPrecio());
 
-            // Clase para niños
-            Clase ninos = new Clase();
-            ninos.setNombre("Patinaje para Niños");
-            ninos.setDescripcion("Clase especial para niños de 5 a 12 años. Aprendizaje divertido y seguro con juegos y actividades adaptadas.");
-            ninos.setNivel(Clase.Nivel.PRINCIPIANTE);
-            ninos.setDiaSemana(Clase.DiaSemana.SABADO);
-            ninos.setHoraInicio(LocalTime.of(10, 30));
-            ninos.setHoraFin(LocalTime.of(11, 30));
-            ninos.setCapacidadMaxima(20);
-            ninos.setInstructor(instructor1);
-            ninos.setActiva(true);
-            ninos.setPrecio(45000.0);
-            claseRepository.save(ninos);
+                // Clase 4 - Patinaje para Niños
+                Clase clase4 = new Clase();
+                clase4.setNombre("Patinaje para Niños");
+                clase4.setDescripcion("Clases especializadas para niños de 6 a 12 años. Aprendizaje divertido y seguro.");
+                clase4.setNivel(Clase.Nivel.PRINCIPIANTE);
+                clase4.setDiaSemana(Clase.DiaSemana.SABADO);
+                clase4.setHoraInicio(LocalTime.of(10, 0)); // 10:00 AM
+                clase4.setHoraFin(LocalTime.of(10, 45));   // 10:45 AM
+                clase4.setCapacidadMaxima(20);
+                clase4.setPrecio(35000.0);
+                clase4.setInstructor(instructor2);
+                clase4.setActiva(true);
+                claseRepository.save(clase4);
+                logger.info("Clase creada: {} - Precio: ${}", clase4.getNombre(), clase4.getPrecio());
 
-            // Clase de fin de semana
-            Clase dominical = new Clase();
-            dominical.setNombre("Patinaje Recreativo");
-            dominical.setDescripcion("Clase relajada para todos los niveles. Perfecta para quienes quieren patinar por diversión y ejercicio.");
-            dominical.setNivel(Clase.Nivel.INTERMEDIO);
-            dominical.setDiaSemana(Clase.DiaSemana.DOMINGO);
-            dominical.setHoraInicio(LocalTime.of(9, 0));
-            dominical.setHoraFin(LocalTime.of(10, 30));
-            dominical.setCapacidadMaxima(25);
-            dominical.setInstructor(instructor2);
-            dominical.setActiva(true);
-            dominical.setPrecio(40000.0);
-            claseRepository.save(dominical);
+                // Clase 5 - Patinaje Recreativo
+                Clase clase5 = new Clase();
+                clase5.setNombre("Patinaje Recreativo Adultos");
+                clase5.setDescripcion("Patinaje relajado para adultos. Ideal para hacer ejercicio y socializar.");
+                clase5.setNivel(Clase.Nivel.PRINCIPIANTE);
+                clase5.setDiaSemana(Clase.DiaSemana.MARTES);
+                clase5.setHoraInicio(LocalTime.of(20, 0)); // 8:00 PM
+                clase5.setHoraFin(LocalTime.of(21, 15));   // 9:15 PM
+                clase5.setCapacidadMaxima(18);
+                clase5.setPrecio(45000.0);
+                clase5.setInstructor(instructor1);
+                clase5.setActiva(true);
+                claseRepository.save(clase5);
+                logger.info("Clase creada: {} - Precio: ${}", clase5.getNombre(), clase5.getPrecio());
 
-            System.out.println("Clases de prueba creadas exitosamente");
-        }
+                // Clase 6 - Competitivo
+                Clase clase6 = new Clase();
+                clase6.setNombre("Entrenamientos Competitivos");
+                clase6.setDescripcion("Preparación para competencias nacionales e internacionales. Solo por invitación.");
+                clase6.setNivel(Clase.Nivel.COMPETITIVO);
+                clase6.setDiaSemana(Clase.DiaSemana.JUEVES);
+                clase6.setHoraInicio(LocalTime.of(18, 30)); // 6:30 PM
+                clase6.setHoraFin(LocalTime.of(20, 30));    // 8:30 PM
+                clase6.setCapacidadMaxima(8);
+                clase6.setPrecio(120000.0);
+                clase6.setInstructor(instructor2);
+                clase6.setActiva(true);
+                claseRepository.save(clase6);
+                logger.info("Clase creada: {} - Precio: ${}", clase6.getNombre(), clase6.getPrecio());
+
+                // Clase 7 - Domingo Familiar
+                Clase clase7 = new Clase();
+                clase7.setNombre("Patinaje Familiar");
+                clase7.setDescripcion("Clases familiares donde padres e hijos pueden aprender juntos.");
+                clase7.setNivel(Clase.Nivel.PRINCIPIANTE);
+                clase7.setDiaSemana(Clase.DiaSemana.DOMINGO);
+                clase7.setHoraInicio(LocalTime.of(11, 0)); // 11:00 AM
+                clase7.setHoraFin(LocalTime.of(12, 0));    // 12:00 PM
+                clase7.setCapacidadMaxima(25);
+                clase7.setPrecio(40000.0);
+                clase7.setInstructor(instructor1);
+                clase7.setActiva(true);
+                claseRepository.save(clase7);
+                logger.info("Clase creada: {} - Precio: ${}", clase7.getNombre(), clase7.getPrecio());
+
+                logger.info("Clases de prueba creadas exitosamente");
+            } catch (Exception e) {
+                logger.error("Error creando clases de prueba: ", e);
+            }
+        } // Fin del if
     }
 
     private void crearTestimoniosDePrueba() {
         if (testimonioRepository.count() == 0) {
+            logger.info("Creando testimonios de prueba...");
+            
             Testimonio testimonio1 = new Testimonio();
             testimonio1.setNombre("María González");
             testimonio1.setComentario("RollerSpeed cambió mi vida. Llegué sin saber patinar y ahora compito a nivel nacional. Los instructores son excepcionales.");
@@ -252,16 +302,20 @@ public class DataLoader implements CommandLineRunner {
             testimonio3.setActivo(true);
             testimonioRepository.save(testimonio3);
 
-            System.out.println("Testimonios de prueba creados exitosamente");
+            logger.info("Testimonios de prueba creados exitosamente");
+        } else {
+            logger.info("Ya existen testimonios en la base de datos. No se crearon testimonios de prueba.");
         }
     }
 
     private void crearNoticiasDePrueba() {
         if (noticiaRepository.count() == 0) {
+            logger.info("Creando noticias de prueba...");
+            
             // Obtener el administrador como autor
             Usuario admin = usuarioRepository.findByEmail("admin@rollerspeed.com").orElse(null);
             if (admin == null) {
-                System.out.println("No se pueden crear noticias: no hay administrador disponible");
+                logger.warn("No se pueden crear noticias: no hay administrador disponible");
                 return;
             }
 
@@ -279,27 +333,47 @@ public class DataLoader implements CommandLineRunner {
             noticia2.setActivo(true);
             noticiaRepository.save(noticia2);
 
-            System.out.println("Noticias de prueba creadas exitosamente");
+            Noticia noticia3 = new Noticia();
+            noticia3.setTitulo("Nuevas Instalaciones");
+            noticia3.setContenido("Estamos renovando nuestras pistas para ofrecerte la mejor experiencia de patinaje. Pronto tendremos nuevas superficies y equipamiento de última generación.");
+            noticia3.setAutor(admin);
+            noticia3.setActivo(true);
+            noticiaRepository.save(noticia3);
+
+            logger.info("Noticias de prueba creadas exitosamente");
+        } else {
+            logger.info("Ya existen noticias en la base de datos. No se crearon noticias de prueba.");
         }
     }
 
     private void crearEventosDePrueba() {
         if (eventoRepository.count() == 0) {
+            logger.info("Creando eventos de prueba...");
+            
             Evento evento1 = new Evento();
             evento1.setTitulo("Torneo Anual de Patinaje");
             evento1.setDescripcion("Gran torneo anual donde participarán patinadores de toda la región. ¡Ven a apoyar a nuestros estudiantes!");
-            evento1.setFechaEvento(java.time.LocalDateTime.now().plusDays(30));
+            evento1.setFechaEvento(LocalDateTime.now().plusDays(30));
             evento1.setActivo(true);
             eventoRepository.save(evento1);
 
             Evento evento2 = new Evento();
             evento2.setTitulo("Día del Patinador");
             evento2.setDescripcion("Celebración especial con exhibiciones, clases gratuitas y actividades recreativas para toda la familia.");
-            evento2.setFechaEvento(java.time.LocalDateTime.now().plusDays(60));
+            evento2.setFechaEvento(LocalDateTime.now().plusDays(60));
             evento2.setActivo(true);
             eventoRepository.save(evento2);
 
-            System.out.println("Eventos de prueba creados exitosamente");
+            Evento evento3 = new Evento();
+            evento3.setTitulo("Workshop de Patinaje Artístico");
+            evento3.setDescripcion("Taller especializado con instructores invitados internacionales. Cupos limitados.");
+            evento3.setFechaEvento(LocalDateTime.now().plusDays(45));
+            evento3.setActivo(true);
+            eventoRepository.save(evento3);
+
+            logger.info("Eventos de prueba creados exitosamente");
+        } else {
+            logger.info("Ya existen eventos en la base de datos. No se crearon eventos de prueba.");
         }
     }
 }

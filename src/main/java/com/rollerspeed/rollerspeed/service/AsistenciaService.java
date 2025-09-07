@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -29,8 +30,8 @@ public class AsistenciaService {
 
     public Asistencia registrarAsistencia(Asistencia asistencia) {
         // Verificar si ya existe una asistencia para el mismo alumno, clase y fecha
-        Optional<Asistencia> existente = asistenciaRepository.findByAlumnoAndClaseAndFecha(
-                asistencia.getAlumno(), 
+        Optional<Asistencia> existente = asistenciaRepository.findByUsuarioAndClaseAndFecha(
+                asistencia.getUsuario(), 
                 asistencia.getClase(), 
                 asistencia.getFecha()
         );
@@ -48,12 +49,12 @@ public class AsistenciaService {
         }
     }
 
-    public Optional<Asistencia> buscarAsistencia(Usuario alumno, Clase clase, LocalDate fecha) {
-        return asistenciaRepository.findByAlumnoAndClaseAndFecha(alumno, clase, fecha);
+    public Optional<Asistencia> buscarAsistencia(Usuario usuario, Clase clase, LocalDate fecha) {
+        return asistenciaRepository.findByUsuarioAndClaseAndFecha(usuario, clase, fecha);
     }
 
-    public List<Asistencia> listarAsistenciasPorAlumno(Usuario alumno) {
-        return asistenciaRepository.findByAlumnoOrderByFechaDesc(alumno);
+    public List<Asistencia> listarAsistenciasPorUsuario(Usuario usuario) {
+        return asistenciaRepository.findByUsuarioOrderByFechaDesc(usuario);
     }
 
     public List<Asistencia> listarAsistenciasPorClase(Clase clase) {
@@ -64,35 +65,35 @@ public class AsistenciaService {
         return asistenciaRepository.findByFechaOrderByClaseAsc(fecha);
     }
 
-    public List<Asistencia> obtenerAsistenciasEnPeriodo(Long alumnoId, LocalDate fechaInicio, LocalDate fechaFin) {
-        return asistenciaRepository.findAsistenciasByAlumnoAndPeriodo(alumnoId, fechaInicio, fechaFin);
+    public List<Asistencia> obtenerAsistenciasEnPeriodo(Long usuarioId, LocalDate fechaInicio, LocalDate fechaFin) {
+        return asistenciaRepository.findAsistenciasByUsuarioAndPeriodo(usuarioId, fechaInicio, fechaFin);
     }
 
     public List<Asistencia> obtenerAsistenciasClaseEnPeriodo(Long claseId, LocalDate fechaInicio, LocalDate fechaFin) {
         return asistenciaRepository.findAsistenciasByClaseAndPeriodo(claseId, fechaInicio, fechaFin);
     }
 
-    public double calcularPorcentajeAsistencia(Long alumnoId) {
-        long totalAsistencias = asistenciaRepository.countTotalAsistencias(alumnoId);
+    public double calcularPorcentajeAsistencia(Long usuarioId) {
+        long totalAsistencias = asistenciaRepository.countTotalAsistencias(usuarioId);
         if (totalAsistencias == 0) {
             return 0.0;
         }
         
-        long asistenciasPresentes = asistenciaRepository.countAsistenciasPresentes(alumnoId);
+        long asistenciasPresentes = asistenciaRepository.countAsistenciasPresentes(usuarioId);
         return (double) asistenciasPresentes / totalAsistencias * 100.0;
     }
 
-    public void marcarAsistencia(Long alumnoId, Long claseId, LocalDate fecha, boolean presente, 
+    public void marcarAsistencia(Long usuarioId, Long claseId, LocalDate fecha, boolean presente, 
                                 String observaciones, Usuario registradoPor) {
-        Usuario alumno = usuarioRepository.findById(alumnoId)
-                .orElseThrow(() -> new IllegalArgumentException("Alumno no encontrado"));
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
         Clase clase = claseRepository.findById(claseId)
                 .orElseThrow(() -> new IllegalArgumentException("Clase no encontrada"));
 
-        Optional<Asistencia> asistenciaOpt = asistenciaRepository.findByAlumnoAndClaseAndFecha(alumno, clase, fecha);
+        Optional<Asistencia> asistenciaOpt = asistenciaRepository.findByUsuarioAndClaseAndFecha(usuario, clase, fecha);
 
         Asistencia asistencia = asistenciaOpt.orElse(new Asistencia());
-        asistencia.setAlumno(alumno);
+        asistencia.setUsuario(usuario);
         asistencia.setClase(clase);
         asistencia.setFecha(fecha);
         asistencia.setPresente(presente);
@@ -130,6 +131,6 @@ public class AsistenciaService {
         
         return asistenciaRepository.findAll().stream()
                 .filter(a -> !a.getFecha().isBefore(inicio) && !a.getFecha().isAfter(fin))
-                .toList();
+                .collect(Collectors.toList());
     }
 }

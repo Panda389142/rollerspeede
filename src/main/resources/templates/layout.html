@@ -277,37 +277,7 @@
 
         // Funciones de inscripción
         function inscribirClaseFn(claseId) {
-            const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-            const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
-            fetch('/inscripcion/clase/' + claseId, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    ...(header && token && { [header]: token })
-                },
-                body: JSON.stringify({})
-            })
-            .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url; // Redirigir si no está autenticado
-                    return;
-                }
-                return response.text();
-            })
-            .then(result => {
-                if (result === 'success') {
-                    alert('¡Te has inscrito exitosamente a la clase!');
-                    location.reload();
-                } else if (result === 'error') {
-                    alert('Error al inscribirse. La clase puede estar llena, ya estar inscrito o no tener permisos.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error de conexión. Intenta nuevamente.');
-            });
+            window.location.href = '/inscripcion/inscribir/' + claseId;
         }
 
         function cancelarInscripcionFn(claseId) {

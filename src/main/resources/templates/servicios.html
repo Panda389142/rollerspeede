@@ -165,16 +165,25 @@
                                         <i class="fas fa-chalkboard-teacher"></i>
                                         <span th:text="${clase.instructor.nombre}">Instructor</span>
                                     </small>
+                                    <strong th:text="${clase.precio != null ? '$' + #numbers.formatDecimal(clase.precio, 0, 'POINT', 0, 'COMMA') : 'Consultar'}"></strong>
 
                                     <div>
-                                        <button class="btn btn-primary btn-sm"
-                                                th:if="${clase.tieneCupo()}"
-                                                th:onclick="'inscribirClaseFn(' + ${clase.id} + ')'">
-                                            <i class="fas fa-plus"></i> Inscribirse
-                                        </button>
-                                        <span class="badge bg-secondary" th:unless="${clase.tieneCupo()}">
-                                            Sin cupos
-                                        </span>
+                                        <!-- Lógica de botones mejorada -->
+                                        <div th:if="${clase.tieneCupo()}">
+                                            <!-- Si el usuario está inscrito, mostrar botón para cancelar -->
+                                            <button th:if="${misClasesIds != null and misClasesIds.contains(clase.id)}"
+                                                    class="btn btn-outline-danger btn-sm"
+                                                    th:onclick="'cancelarInscripcionFn(' + ${clase.id} + ')'">
+                                                <i class="fas fa-times"></i> Cancelar
+                                            </button>
+                                            <!-- Si no está inscrito, mostrar botón para inscribirse -->
+                                            <button th:unless="${misClasesIds != null and misClasesIds.contains(clase.id)}"
+                                                    class="btn btn-primary btn-sm"
+                                                    th:onclick="'inscribirClaseFn(' + ${clase.id} + ')'">
+                                                <i class="fas fa-plus"></i> Inscribirse
+                                            </button>
+                                        </div>
+                                        <span class="badge bg-secondary" th:unless="${clase.tieneCupo()}">Sin cupos</span>
                                     </div>
                                 </div>
                             </div>

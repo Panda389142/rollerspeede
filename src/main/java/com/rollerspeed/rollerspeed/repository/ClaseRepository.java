@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface ClaseRepository extends JpaRepository<Clase, Long> {
@@ -28,4 +29,7 @@ public interface ClaseRepository extends JpaRepository<Clase, Long> {
 
     @Query("SELECT c FROM Clase c WHERE c.instructor.id = :instructorId AND c.activa = true ORDER BY c.diaSemana, c.horaInicio")
     List<Clase> findClasesByInstructor(@Param("instructorId") Long instructorId);
+
+    @Query("SELECT c.id FROM Clase c JOIN c.alumnos a WHERE a.id = :alumnoId")
+    Set<Long> findIdClasesByAlumnoId(@Param("alumnoId") Long alumnoId);
 }

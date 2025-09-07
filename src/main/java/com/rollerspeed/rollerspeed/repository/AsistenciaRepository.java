@@ -15,17 +15,17 @@ import java.util.Optional;
 @Repository
 public interface AsistenciaRepository extends JpaRepository<Asistencia, Long> {
 
-    Optional<Asistencia> findByAlumnoAndClaseAndFecha(Usuario alumno, Clase clase, LocalDate fecha);
+    Optional<Asistencia> findByUsuarioAndClaseAndFecha(Usuario usuario, Clase clase, LocalDate fecha);
 
-    @Query("SELECT a FROM Asistencia a JOIN FETCH a.clase WHERE a.alumno = :alumno ORDER BY a.fecha DESC")
-    List<Asistencia> findByAlumnoOrderByFechaDesc(@Param("alumno") Usuario alumno);
+    @Query("SELECT a FROM Asistencia a JOIN FETCH a.clase WHERE a.usuario = :usuario ORDER BY a.fecha DESC")
+    List<Asistencia> findByUsuarioOrderByFechaDesc(@Param("usuario") Usuario usuario);
 
     List<Asistencia> findByClaseOrderByFechaDesc(Clase clase);
 
     List<Asistencia> findByFechaOrderByClaseAsc(LocalDate fecha);
 
-    @Query("SELECT a FROM Asistencia a WHERE a.alumno.id = :alumnoId AND a.fecha BETWEEN :fechaInicio AND :fechaFin ORDER BY a.fecha DESC")
-    List<Asistencia> findAsistenciasByAlumnoAndPeriodo(@Param("alumnoId") Long alumnoId, 
+    @Query("SELECT a FROM Asistencia a WHERE a.usuario.id = :usuarioId AND a.fecha BETWEEN :fechaInicio AND :fechaFin ORDER BY a.fecha DESC")
+    List<Asistencia> findAsistenciasByUsuarioAndPeriodo(@Param("usuarioId") Long usuarioId, 
                                                        @Param("fechaInicio") LocalDate fechaInicio,
                                                        @Param("fechaFin") LocalDate fechaFin);
 
@@ -34,9 +34,9 @@ public interface AsistenciaRepository extends JpaRepository<Asistencia, Long> {
                                                       @Param("fechaInicio") LocalDate fechaInicio,
                                                       @Param("fechaFin") LocalDate fechaFin);
 
-    @Query("SELECT COUNT(a) FROM Asistencia a WHERE a.alumno.id = :alumnoId AND a.presente = true")
-    long countAsistenciasPresentes(@Param("alumnoId") Long alumnoId);
+    @Query("SELECT COUNT(a) FROM Asistencia a WHERE a.usuario.id = :usuarioId AND a.presente = true")
+    long countAsistenciasPresentes(@Param("usuarioId") Long usuarioId);
 
-    @Query("SELECT COUNT(a) FROM Asistencia a WHERE a.alumno.id = :alumnoId")
-    long countTotalAsistencias(@Param("alumnoId") Long alumnoId);
+    @Query("SELECT COUNT(a) FROM Asistencia a WHERE a.usuario.id = :usuarioId")
+    long countTotalAsistencias(@Param("usuarioId") Long usuarioId);
 }

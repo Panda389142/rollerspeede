@@ -183,6 +183,9 @@
                                                                             <span th:text="${clase.horaInicio}">Hora</span>
                                                                         </small>
                                                                     </p>
+                                                                    <p class="mb-1">
+                                                                        <strong th:text="${clase.precio != null ? '$' + #numbers.formatDecimal(clase.precio, 0, 'POINT', 0, 'COMMA') : '$0'}"></strong>
+                                                                    </p>
                                                                 </div>
                                                                 <button class="btn btn-sm btn-outline-danger"
                                                                         th:onclick="'cancelarInscripcionFn(' + ${clase.id} + ')'">
@@ -216,6 +219,9 @@
                                                                             <span th:text="${clase.diaSemana}">Día</span> -
                                                                             <span th:text="${clase.horaInicio}">Hora</span>
                                                                         </small>
+                                                                    </p>
+                                                                    <p class="mb-1">
+                                                                        <strong th:text="${clase.precio != null ? '$' + #numbers.formatDecimal(clase.precio, 0, 'POINT', 0, 'COMMA') : 'Gratis'}"></strong>
                                                                     </p>
                                                                 </div>
                                                                 <button class="btn btn-sm btn-outline-primary"
@@ -259,6 +265,7 @@
                                                                     <th>Día</th>
                                                                     <th>Horario</th>
                                                                     <th>Alumnos</th>
+                                                                    <th>Precio</th>
                                                                     <th>Acciones</th>
                                                                 </tr>
                                                             </thead>
@@ -277,6 +284,7 @@
                                                                         <span th:text="${clase.alumnos != null ? #lists.size(clase.alumnos) : 0}">0</span> / 
                                                                         <span th:text="${clase.capacidadMaxima ?: 0}">0</span>
                                                                     </td>
+                                                                    <td th:text="${clase.precio != null ? '$' + #numbers.formatDecimal(clase.precio, 0, 'POINT', 0, 'COMMA') : '$0'}">$50.00</td>
                                                                     <td>
                                                                         <button class="btn btn-sm btn-primary" 
                                                                                 th:onclick="'verAlumnosFn(' + ${clase.id} + ')'">

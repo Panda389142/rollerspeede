@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 public class InscripcionService {
@@ -22,7 +23,7 @@ public class InscripcionService {
     private PagoRepository pagoRepository;
 
     @Transactional
-    public boolean inscribirAlumnoEnClase(Long claseId, Usuario usuario) {
+    public boolean inscribirUsuarioEnClase(Long claseId, Usuario usuario) {
         Clase clase = claseRepository.findById(claseId).orElse(null);
         if (clase == null || !clase.getActiva()) {
             return false;
@@ -43,15 +44,18 @@ public class InscripcionService {
         return true;
     }
 
-    private void generarPagoPorInscripcion(Usuario alumno, Clase clase) {
+    private void generarPagoPorInscripcion(Usuario usuario, Clase clase) {
         // Solo generar un pago si la clase tiene un precio y es mayor a 0.
         if (clase.getPrecio() != null && clase.getPrecio() > 0) {
             Pago nuevoPago = new Pago();
-            nuevoPago.setAlumno(alumno);
+            nuevoPago.setUsuario(usuario);
             nuevoPago.setClase(clase);
             nuevoPago.setMonto(BigDecimal.valueOf(clase.getPrecio()));
+            nuevoPago.setDescripcion("Inscripción a clase: " + clase.getNombre());
             nuevoPago.setFechaGeneracion(LocalDate.now());
-            nuevoPago.setEstado(Pago.EstadoPago.PENDIENTE);
+            nuevoPago.setEstado(Pago.EstadoPago.COMPLETADO); // Pago exitoso
+            nuevoPago.setFechaPago(LocalDateTime.now());
+            nuevoPago.setMedioPago(usuario.getMedioPago());
             pagoRepository.save(nuevoPago);
         }
     }
@@ -71,5 +75,13 @@ public class InscripcionService {
         usuario.getClases().remove(clase); // Sincronizar el otro lado de la relación
         claseRepository.save(clase);
         return true;
+    }
+
+    public boolean estaInscrito(Long claseId, Usuario usuario) {
+        Clase clase = claseRepository.findById(claseId).orElse(null);
+        if (clase == null) {
+            return false;
+        }
+        return clase.getAlumnos().contains(usuario);
     }
 }

@@ -72,6 +72,14 @@ public class MainController {
     @GetMapping("/servicios")
     public String servicios(Model model) {
         model.addAttribute("clases", claseService.listarTodasLasClases());
+        
+        // Añadir información sobre las inscripciones del usuario actual si está logueado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+            usuarioService.buscarPorEmail(auth.getName()).ifPresent(usuario -> {
+                model.addAttribute("misClasesIds", claseService.listarIdsClasesDeAlumno(usuario.getId()));
+            });
+        }
         return "servicios";
     }
 
@@ -228,7 +236,7 @@ public class MainController {
     public String historialPagos(Model model, Principal principal) {
         String email = principal.getName();
         usuarioService.buscarPorEmail(email).ifPresent(usuario -> {
-            model.addAttribute("pagos", pagoService.listarPagosPorAlumno(usuario));
+            model.addAttribute("pagos", pagoService.listarPagosPorUsuario(usuario));
         });
         return "historial-pagos";
     }
@@ -239,7 +247,7 @@ public class MainController {
         String email = principal.getName();
         try {
             usuarioService.buscarPorEmail(email).ifPresentOrElse(usuario -> {
-                model.addAttribute("asistencias", asistenciaService.listarAsistenciasPorAlumno(usuario));
+                model.addAttribute("asistencias", asistenciaService.listarAsistenciasPorUsuario(usuario));
                 model.addAttribute("porcentajeAsistencia", asistenciaService.calcularPorcentajeAsistencia(usuario.getId()));
             }, () -> {
                 // En el caso improbable de que no se encuentre el usuario, se envían valores por defecto.

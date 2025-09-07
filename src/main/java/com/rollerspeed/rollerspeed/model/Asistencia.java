@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "asistencias", 
-       uniqueConstraints = @UniqueConstraint(columnNames = {"alumno_id", "clase_id", "fecha"}))
+       uniqueConstraints = @UniqueConstraint(columnNames = {"usuario_id", "clase_id", "fecha"}))
 public class Asistencia {
 
     @Id
@@ -16,9 +16,9 @@ public class Asistencia {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "alumno_id", nullable = false)
-    @NotNull(message = "El alumno es obligatorio")
-    private Usuario alumno;
+    @JoinColumn(name = "usuario_id", nullable = false)
+    @NotNull(message = "El usuario es obligatorio")
+    private Usuario usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clase_id", nullable = false)
@@ -45,9 +45,9 @@ public class Asistencia {
     // Constructores
     public Asistencia() {}
 
-    public Asistencia(Usuario alumno, Clase clase, LocalDate fecha, Boolean presente, 
+    public Asistencia(Usuario usuario, Clase clase, LocalDate fecha, Boolean presente, 
                      String observaciones, Usuario registradoPor) {
-        this.alumno = alumno;
+        this.usuario = usuario;
         this.clase = clase;
         this.fecha = fecha;
         this.presente = presente;
@@ -59,8 +59,8 @@ public class Asistencia {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public Usuario getAlumno() { return alumno; }
-    public void setAlumno(Usuario alumno) { this.alumno = alumno; }
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 
     public Clase getClase() { return clase; }
     public void setClase(Clase clase) { this.clase = clase; }
