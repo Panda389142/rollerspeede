@@ -53,8 +53,9 @@ public class InscripcionService {
             nuevoPago.setMonto(BigDecimal.valueOf(clase.getPrecio()));
             nuevoPago.setDescripcion("Inscripción a clase: " + clase.getNombre());
             nuevoPago.setFechaGeneracion(LocalDate.now());
-            nuevoPago.setEstado(Pago.EstadoPago.COMPLETADO); // Pago exitoso
-            nuevoPago.setFechaPago(LocalDateTime.now());
+            nuevoPago.setEstado(Pago.EstadoPago.PENDIENTE); // El pago se genera como pendiente
+            // La fecha de pago se establece al confirmar
+            // nuevoPago.setFechaPago(LocalDateTime.now());
             nuevoPago.setMedioPago(usuario.getMedioPago());
             pagoRepository.save(nuevoPago);
         }

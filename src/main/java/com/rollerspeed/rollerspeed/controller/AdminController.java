@@ -36,6 +36,9 @@ public class AdminController {
     @Autowired
     private ClaseService claseService;
 
+    @Autowired
+    private NotificacionService notificacionService;
+
     @GetMapping("/testimonios")
     public String listarTestimonios(Model model) {
         List<Testimonio> testimonios = testimonioService.listarTestimoniosActivos();
@@ -141,8 +144,14 @@ public class AdminController {
 
     @PostMapping("/pagos/{id}/rechazar")
     public String rechazarPago(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        pagoService.cambiarEstadoPago(id, Pago.EstadoPago.CANCELADO);
-        redirectAttributes.addFlashAttribute("mensaje", "Pago rechazado correctamente");
+        pagoService.buscarPorId(id).ifPresent(pago -> {
+            pagoService.cambiarEstadoPago(id, Pago.EstadoPago.CANCELADO);
+            String mensaje = String.format("Tu pago de S/%.2f para la clase '%s' fue rechazado.", 
+                                           pago.getMonto(), 
+                                           pago.getClase() != null ? pago.getClase().getNombre() : "N/A");
+            notificacionService.crearNotificacion(pago.getUsuario(), mensaje, "/historial-pagos");
+            redirectAttributes.addFlashAttribute("mensaje", "Pago rechazado y usuario notificado.");
+        });
         return "redirect:/admin/pagos";
     }
 

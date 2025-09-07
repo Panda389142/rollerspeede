@@ -50,12 +50,7 @@ public class MainController {
     @Autowired
     private EventoService eventoService;
 
-    @GetMapping("/")
-    public String index(Model model) {
-        model.addAttribute("clases", claseService.listarClasesConCupo());
-        model.addAttribute("testimonios", testimonioService.listarTestimoniosActivos());
-        return "index";
-    }
+        
 
     @GetMapping("/home")
     public String home() {

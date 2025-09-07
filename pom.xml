@@ -76,6 +76,16 @@ https://repo.maven.apache.org/maven2: repo.maven.apache.org)~~>--><parent>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- [AÑADIDO] Gestor de migraciones de base de datos -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
         
         <!-- ======== UTILIDADES Y HERRAMIENTAS ======== -->
 

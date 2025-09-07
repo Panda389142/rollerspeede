@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -15,5 +16,7 @@ public interface PagoRepository extends JpaRepository<Pago, Long> {
     List<Pago> findByUsuario(@Param("usuario") Usuario usuario);
 
     List<Pago> findByEstado(Pago.EstadoPago estado);
+
+    List<Pago> findByEstadoAndFechaPagoBetween(Pago.EstadoPago estado, LocalDateTime fechaInicio, LocalDateTime fechaFin);
 
 }
