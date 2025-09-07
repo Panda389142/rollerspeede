@@ -128,4 +128,22 @@ public class InstructorController {
 
         return "instructor/ver-asistencias";
     }
+
+    @GetMapping("/clase/{id}/alumnos")
+    public String verAlumnosDeClase(@PathVariable Long id, Model model, Principal principal) {
+        Clase clase = claseService.buscarPorId(id)
+                .orElseThrow(() -> new IllegalArgumentException("Clase no encontrada"));
+
+        Usuario instructor = usuarioService.buscarPorEmail(principal.getName()).orElseThrow();
+
+        // Verificación de seguridad: el instructor solo puede acceder a sus propias clases
+        if (clase.getInstructor() == null || !clase.getInstructor().equals(instructor)) {
+            return "redirect:/error"; // O una página de acceso denegado
+        }
+
+        model.addAttribute("clase", clase);
+        model.addAttribute("alumnos", new ArrayList<>(clase.getAlumnos()));
+
+        return "instructor/ver-alumnos";
+    }
 }
