@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<body>
+    <main layout:fragment="content">
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="mb-4">Gestión de Instructores</h1>
+
+                    <!-- Mensajes de éxito/error -->
+                    <div th:if="${mensaje}" class="alert alert-success" role="alert">
+                        <p th:text="${mensaje}"></p>
+                    </div>
+                    <div th:if="${error}" class="alert alert-danger" role="alert">
+                        <p th:text="${error}"></p>
+                    </div>
+
+                    <!-- Botón para crear nuevo instructor -->
+                    <div class="mb-3">
+                        <a th:href="@{/admin/instructores/nuevo}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Nuevo Instructor
+                        </a>
+                    </div>
+
+                    <!-- Lista de instructores -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Instructores</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Email</th>
+                                            <th>Teléfono</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="instructor : ${instructores}">
+                                            <td th:text="${instructor.id}">1</td>
+                                            <td th:text="${instructor.nombre}">Nombre Instructor</td>
+                                            <td th:text="${instructor.email}">email@example.com</td>
+                                            <td th:text="${instructor.telefono}">1234567890</td>
+                                            <td>
+                                                <span class="badge" th:classappend="${instructor.activo} ? 'bg-success' : 'bg-secondary'"
+                                                      th:text="${instructor.activo} ? 'Activo' : 'Inactivo'">Estado</span>
+                                            </td>
+                                            <td>
+                                                <a th:href="@{/admin/instructores/editar/{id}(id=${instructor.id})}" class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-edit"></i> Editar
+                                                </a>
+                                                <form th:if="${instructor.activo}" th:action="@{/admin/instructores/desactivar/{id}(id=${instructor.id})}" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-danger"
+                                                            onclick="return confirm('¿Estás seguro de desactivar a este instructor?')">
+                                                        <i class="fas fa-user-slash"></i> Desactivar
+                                                    </button>
+                                                </form>
+                                                <form th:unless="${instructor.activo}" th:action="@{/admin/instructores/activar/{id}(id=${instructor.id})}" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-success"
+                                                            onclick="return confirm('¿Estás seguro de activar a este instructor?')">
+                                                        <i class="fas fa-user-plus"></i> Activar
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

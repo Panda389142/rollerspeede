@@ -64,14 +64,18 @@
                             </div>
                             
                             <!-- Enlaces para Administradores -->
+                            <!-- Enlaces para Administradores -->
                             <div sec:authorize="hasRole('ADMINISTRADOR')">
-                                <a class="nav-link" href="#gestion-usuarios">
+                                <a class="nav-link" th:href="@{/admin/usuarios}">
                                     <i class="fas fa-users-cog"></i> Gestión Usuarios
                                 </a>
-                                <a class="nav-link" href="#gestion-clases">
+                                <a class="nav-link" th:href="@{/admin/instructores}">
+                                    <i class="fas fa-chalkboard-teacher"></i> Gestión Instructores
+                                </a>
+                                                                <a class="nav-link" th:href="@{/admin/clases}">
                                     <i class="fas fa-calendar-plus"></i> Gestión Clases
                                 </a>
-                                <a class="nav-link" href="#reportes">
+                                <a class="nav-link" th:href="@{/admin/reportes}">
                                     <i class="fas fa-chart-bar"></i> Reportes
                                 </a>
                                 <a class="nav-link" th:href="@{/perfil}">
@@ -465,6 +469,12 @@
             </div>
         </div>
     </main>
+
+    <script>
+        function generarReporteFn() {
+            window.location.href = '/admin/reportes';
+        }
+    </script>
 
 </body>
 </html>

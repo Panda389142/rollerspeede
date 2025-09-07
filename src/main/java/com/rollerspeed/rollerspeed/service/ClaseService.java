@@ -38,10 +38,15 @@ public class ClaseService {
     }
 
     public List<Clase> listarTodasLasClases() {
-        logger.info("Listando todas las clases activas.");
+        logger.info("Listando todas las clases activas para la vista de usuario.");
         List<Clase> clases = claseRepository.findByActivaTrueOrderByDiaSemanaAscHoraInicioAsc();
         logger.info("Se encontraron {} clases activas.", clases.size());
         return clases;
+    }
+
+    public List<Clase> listarTodasLasClasesParaAdmin() {
+        logger.info("Listando absolutamente todas las clases para la vista de admin.");
+        return claseRepository.findAll(); // Devuelve todas, activas e inactivas.
     }
 
     public List<Clase> listarClasesConCupo() {

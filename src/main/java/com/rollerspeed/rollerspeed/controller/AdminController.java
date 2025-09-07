@@ -147,6 +147,13 @@ public class AdminController {
     }
 
     // --- Gestión de Usuarios ---
+    @GetMapping("/usuarios")
+    public String listarUsuarios(Model model) {
+        List<Usuario> usuarios = usuarioService.listarTodosLosUsuarios();
+        model.addAttribute("usuarios", usuarios);
+        return "admin/usuarios";
+    }
+
     @GetMapping("/usuarios/nuevo")
     public String mostrarFormularioNuevoUsuario(Model model) {
         model.addAttribute("usuario", new Usuario());
@@ -170,7 +177,95 @@ public class AdminController {
         return "redirect:/dashboard"; // O a una lista de usuarios
     }
 
+    // --- Gestión de Instructores ---
+    @GetMapping("/instructores")
+    public String listarInstructores(Model model) {
+        List<Usuario> instructores = usuarioService.listarInstructores();
+        model.addAttribute("instructores", instructores);
+        return "admin/instructores";
+    }
+
+    @GetMapping("/instructores/nuevo")
+    public String mostrarFormularioNuevoInstructor(Model model) {
+        model.addAttribute("usuario", new Usuario());
+        model.addAttribute("esInstructor", true); // Para diferenciar en el formulario si es necesario
+        return "admin/instructor-form";
+    }
+
+    @PostMapping("/instructores/guardar")
+    public String guardarInstructor(@Valid @ModelAttribute("usuario") Usuario usuario,
+                                   BindingResult result,
+                                   RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return "admin/instructor-form";
+        }
+        try {
+            // Asegurarse de que el rol sea INSTRUCTOR
+            usuario.setRol(Usuario.Rol.INSTRUCTOR);
+            usuarioService.crearInstructor(usuario);
+            redirectAttributes.addFlashAttribute("mensaje", "Instructor creado exitosamente.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al crear el instructor: " + e.getMessage());
+        }
+        return "redirect:/admin/instructores";
+    }
+
+    @GetMapping("/instructores/editar/{id}")
+    public String mostrarFormularioEditarInstructor(@PathVariable Long id, Model model) {
+        usuarioService.buscarPorId(id).ifPresent(usuario -> model.addAttribute("usuario", usuario));
+        model.addAttribute("esInstructor", true);
+        return "admin/instructor-form";
+    }
+
+    @PostMapping("/instructores/actualizar")
+    public String actualizarInstructor(@Valid @ModelAttribute("usuario") Usuario usuario,
+                                      BindingResult result,
+                                      RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return "admin/instructor-form";
+        }
+        try {
+            // Asegurarse de que el rol no cambie si no se desea, o forzar a INSTRUCTOR
+            Usuario existingUser = usuarioService.buscarPorId(usuario.getId())
+                                                .orElseThrow(() -> new RuntimeException("Instructor no encontrado"));
+            existingUser.setNombre(usuario.getNombre());
+            existingUser.setEmail(usuario.getEmail());
+            existingUser.setFechaNacimiento(usuario.getFechaNacimiento());
+            existingUser.setGenero(usuario.getGenero());
+            existingUser.setTelefono(usuario.getTelefono());
+            existingUser.setMedioPago(usuario.getMedioPago());
+            // No actualizar la contraseña desde aquí a menos que se provea una nueva
+            // No actualizar el rol desde aquí, se mantiene el existente
+            usuarioService.actualizarUsuario(existingUser);
+            redirectAttributes.addFlashAttribute("mensaje", "Instructor actualizado exitosamente.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al actualizar el instructor: " + e.getMessage());
+        }
+        return "redirect:/admin/instructores";
+    }
+
+    @PostMapping("/instructores/desactivar/{id}")
+    public String desactivarInstructor(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        usuarioService.desactivarUsuario(id);
+        redirectAttributes.addFlashAttribute("mensaje", "Instructor desactivado correctamente.");
+        return "redirect:/admin/instructores";
+    }
+
+    @PostMapping("/instructores/activar/{id}")
+    public String activarInstructor(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        usuarioService.activarUsuario(id);
+        redirectAttributes.addFlashAttribute("mensaje", "Instructor activado correctamente.");
+        return "redirect:/admin/instructores";
+    }
+
     // --- Gestión de Clases ---
+    @GetMapping("/clases")
+    public String listarClases(Model model) {
+        List<Clase> clases = claseService.listarTodasLasClases();
+        model.addAttribute("clases", clases);
+        return "admin/clases";
+    }
+
     @GetMapping("/clases/nuevo")
     public String mostrarFormularioNuevaClase(Model model) {
         model.addAttribute("clase", new Clase());
@@ -192,6 +287,48 @@ public class AdminController {
         }
         claseService.crearClase(clase);
         redirectAttributes.addFlashAttribute("mensaje", "Clase creada exitosamente.");
-        return "redirect:/dashboard"; // O a una lista de clases
+        return "redirect:/admin/clases"; // Changed redirect to /admin/clases
+    }
+
+    @GetMapping("/clases/editar/{id}")
+    public String mostrarFormularioEditarClase(@PathVariable Long id, Model model) {
+        claseService.buscarPorId(id).ifPresent(clase -> model.addAttribute("clase", clase));
+        List<Usuario> instructores = usuarioService.listarInstructores();
+        model.addAttribute("instructores", instructores);
+        return "admin/clase-form";
+    }
+
+    @PostMapping("/clases/actualizar")
+    public String actualizarClase(@Valid @ModelAttribute("clase") Clase clase,
+                                 BindingResult result,
+                                 RedirectAttributes redirectAttributes,
+                                 Model model) {
+        if (result.hasErrors()) {
+            List<Usuario> instructores = usuarioService.listarInstructores();
+            model.addAttribute("instructores", instructores);
+            return "admin/clase-form";
+        }
+        claseService.actualizarClase(clase);
+        redirectAttributes.addFlashAttribute("mensaje", "Clase actualizada exitosamente.");
+        return "redirect:/admin/clases";
+    }
+
+    @PostMapping("/clases/eliminar/{id}")
+    public String eliminarClase(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        claseService.desactivarClase(id);
+        redirectAttributes.addFlashAttribute("mensaje", "Clase desactivada correctamente.");
+        return "redirect:/admin/clases";
+    }
+
+    @PostMapping("/clases/activar/{id}")
+    public String activarClase(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        claseService.activarClase(id);
+        redirectAttributes.addFlashAttribute("mensaje", "Clase activada correctamente.");
+        return "redirect:/admin/clases";
+    }
+
+    @GetMapping("/reportes")
+    public String listarReportes(Model model) {
+        return "admin/reportes";
     }
 }
