@@ -43,7 +43,7 @@
                 <h2 class="text-center mb-4">Clases Disponibles</h2>
                 <div class="row">
                     <!-- Iterar sobre las clases disponibles que vienen del controlador -->
-                    <div class="col-md-4 mb-4" th:each="clase : ${clasesDisponibles}">
+                    <div class="col-md-4 mb-4" th:each="clase : ${clases}">
                         <div class="card h-100">
                             <div class="card-body">
                                 <h5 class="card-title" th:text="${clase.nombre}">Nombre de la Clase</h5>
