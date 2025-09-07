@@ -125,6 +125,7 @@
                 <div class="row g-4" th:if="${clases != null and not #lists.isEmpty(clases)}">
                     <div class="col-lg-4 col-md-6" th:each="clase, iterStat : ${clases}">
                         <div class="card h-100" th:classappend="${iterStat.index == 0} ? 'border-primary' : ''">
+                            <img th:if="${clase.imageUrl != null and not #strings.isEmpty(clase.imageUrl)}" th:src="${clase.imageUrl}" class="card-img-top" alt="Imagen de la clase">
                             <div class="card-header">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="card-title mb-0" th:text="${clase.nombre}">Nombre de la Clase</h5>

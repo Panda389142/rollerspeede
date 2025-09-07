@@ -60,6 +60,9 @@ public class Clase {
     @Column(nullable = false)
     private Boolean activa = true;
 
+    @Column
+    private String imageUrl;
+
     // Constructores
     public Clase() {}
 
@@ -123,6 +126,9 @@ public class Clase {
 
     public Double getPrecio() { return precio; }
     public void setPrecio(Double precio) { this.precio = precio; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
     // Enums
     public enum Nivel {
