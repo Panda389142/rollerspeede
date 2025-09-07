@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <title>Mi Asistencia</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0"><i class="fas fa-chart-line me-2"></i>Mi Progreso de Asistencia</h2>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4 align-items-center">
+                    <div class="col-md-3 text-center">
+                        <h5>Porcentaje General</h5>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar" role="progressbar"
+                                 th:style="'width: ' + ${porcentajeAsistencia} + '%;'"
+                                 th:aria-valuenow="${porcentajeAsistencia}" aria-valuemin="0" aria-valuemax="100"
+                                 th:text="${#numbers.formatDecimal(porcentajeAsistencia, 1, 1)} + '%'"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <p class="lead">Este es tu registro de asistencias a las clases. ¡Sigue así para no perderte de nada y convertirte en el mejor patinador!</p>
+                    </div>
+                </div>
+
+                <div th:if="${asistencias == null or #lists.isEmpty(asistencias)}">
+                    <div class="alert alert-info text-center" role="alert">
+                        Aún no tienes registros de asistencia.
+                    </div>
+                </div>
+
+                <div th:if="${asistencias != null and not #lists.isEmpty(asistencias)}" class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                        <tr>
+                            <th scope="col">Clase</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col" class="text-center">Estado</th>
+                            <th scope="col">Observaciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="asistencia : ${asistencias}">
+                            <td th:text="${asistencia.clase.nombre}">Nombre de la Clase</td>
+                            <td th:text="${#temporals.format(asistencia.fecha, 'dd/MM/yyyy')}">01/01/2025</td>
+                            <td class="text-center">
+                                <span th:if="${asistencia.presente}" class="badge bg-success">Presente</span>
+                                <span th:unless="${asistencia.presente}" class="badge bg-danger">Ausente</span>
+                            </td>
+                            <td th:text="${asistencia.observaciones}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                    <a th:href="@{/dashboard}" class="btn btn-secondary">Volver al Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

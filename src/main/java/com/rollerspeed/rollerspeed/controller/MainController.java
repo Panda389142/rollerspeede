@@ -254,6 +254,6 @@ public class MainController {
             model.addAttribute("porcentajeAsistencia", 0.0);
             model.addAttribute("error", "Ocurrió un error al calcular tus estadísticas de asistencia. Por favor, contacta a soporte.");
         }
-        return "alumno/mi-asistencia";
+        return "mi-asistencia";
     }
 }
