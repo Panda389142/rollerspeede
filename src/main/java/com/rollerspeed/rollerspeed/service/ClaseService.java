@@ -30,7 +30,7 @@ public class ClaseService {
     }
 
     public List<Clase> listarTodasLasClases() {
-        return claseRepository.findByActivaTrueOrderByDiaSemanaAscHoraInicioAsc();
+        return claseRepository.findAll(); // Changed to findAll() for admin view
     }
 
     public List<Clase> listarClasesConCupo() {
