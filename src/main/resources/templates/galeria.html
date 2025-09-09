@@ -19,10 +19,10 @@
                 <div class="row g-4" th:if="${items != null and not #lists.isEmpty(items)}">
                     <div class="col-md-4" th:each="item : ${items}">
                         <div class="card h-100">
-                            <div th:if="${item.tipo == T(com.rollerspeed.rollerspeed.model.GaleriaItem.Tipo).FOTO}">
+                            <div th:if="${item.tipo != null and item.tipo == T(com.rollerspeed.rollerspeed.model.GaleriaItem.Tipo).FOTO}">
                                 <img th:src="${item.imageUrl}" class="card-img-top" th:alt="${item.titulo}">
                             </div>
-                            <div th:if="${item.tipo == T(com.rollerspeed.rollerspeed.model.GaleriaItem.Tipo).VIDEO}">
+                            <div th:if="${item.tipo != null and item.tipo == T(com.rollerspeed.rollerspeed.model.GaleriaItem.Tipo).VIDEO}">
                                 <div class="embed-responsive embed-responsive-16by9">
                                     <iframe class="embed-responsive-item" th:src="${item.videoUrl}" allowfullscreen></iframe>
                                 </div>
