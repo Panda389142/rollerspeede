@@ -80,4 +80,8 @@ public class PagoService {
         pagoRepository.save(nuevoPago);
         logger.info("Pago creado con ID: {}", nuevoPago.getId());
     }
+
+    public List<Pago> listarTodosLosPagos() {
+        return pagoRepository.findAll();
+    }
 }

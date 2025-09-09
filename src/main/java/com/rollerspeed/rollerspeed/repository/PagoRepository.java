@@ -19,4 +19,6 @@ public interface PagoRepository extends JpaRepository<Pago, Long> {
 
     List<Pago> findByEstadoAndFechaPagoBetween(Pago.EstadoPago estado, LocalDateTime fechaInicio, LocalDateTime fechaFin);
 
+    List<Pago> findAll();
+
 }

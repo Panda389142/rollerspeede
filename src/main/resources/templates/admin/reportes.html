@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Reportes - RollerSpeed</title>
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Generación de Reportes</h2>
+        </div>
+        <div class="card-body">
+            <p>Seleccione el tipo de reporte que desea generar.</p>
+            <form th:action="@{/admin/reportes/generar}" method="post" target="_blank">
+                <div class="form-group">
+                    <label for="tipoReporte">Tipo de Reporte</label>
+                    <select id="tipoReporte" name="tipoReporte" class="form-control" required>
+                        <option value="usuarios">Reporte de Usuarios</option>
+                        <option value="pagos">Reporte de Pagos</option>
+                        <option value="clases">Reporte de Clases</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Generar Reporte en PDF</button>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

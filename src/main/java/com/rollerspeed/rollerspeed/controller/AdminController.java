@@ -4,6 +4,9 @@ import com.rollerspeed.rollerspeed.model.*;
 import com.rollerspeed.rollerspeed.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,6 +44,9 @@ public class AdminController {
 
     @Autowired
     private GaleriaItemService galeriaItemService;
+
+    @Autowired
+    private PdfService pdfService;
 
     @GetMapping("/testimonios")
     public String listarTestimonios(Model model) {
@@ -149,8 +155,8 @@ public class AdminController {
     public String rechazarPago(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         pagoService.buscarPorId(id).ifPresent(pago -> {
             pagoService.cambiarEstadoPago(id, Pago.EstadoPago.CANCELADO);
-            String mensaje = String.format("Tu pago de S/%.2f para la clase '%s' fue rechazado.", 
-                                           pago.getMonto(), 
+            String mensaje = String.format("Tu pago de S/%.2f para la clase '%s' fue rechazado.",
+                                           pago.getMonto(),
                                            pago.getClase() != null ? pago.getClase().getNombre() : "N/A");
             notificacionService.crearNotificacion(pago.getUsuario(), mensaje, "/historial-pagos");
             redirectAttributes.addFlashAttribute("mensaje", "Pago rechazado y usuario notificado.");
@@ -170,7 +176,7 @@ public class AdminController {
     public String mostrarFormularioNuevoUsuario(Model model) {
         model.addAttribute("usuario", new Usuario());
         // Podríamos añadir una lista de roles si el admin pudiera crear otros admins/instructores
-        return "admin/usuario-form"; 
+        return "admin/usuario-form";
     }
 
     @PostMapping("/usuarios/guardar")
@@ -342,6 +348,39 @@ public class AdminController {
     @GetMapping("/reportes")
     public String listarReportes(Model model) {
         return "admin/reportes";
+    }
+
+    @PostMapping("/reportes/generar")
+    public ResponseEntity<byte[]> generarReporte(@RequestParam("tipoReporte") String tipoReporte) {
+        byte[] pdf = null;
+        String nombreArchivo = "reporte.pdf";
+
+        switch (tipoReporte) {
+            case "usuarios":
+                List<Usuario> usuarios = usuarioService.listarTodosLosUsuarios();
+                pdf = pdfService.generarPdfUsuarios(usuarios);
+                nombreArchivo = "reporte_usuarios.pdf";
+                break;
+            case "pagos":
+                List<Pago> pagos = pagoService.listarTodosLosPagos();
+                pdf = pdfService.generarPdfPagos(pagos);
+                nombreArchivo = "reporte_pagos.pdf";
+                break;
+            case "clases":
+                List<Clase> clases = claseService.listarTodasLasClases();
+                pdf = pdfService.generarPdfClases(clases);
+                nombreArchivo = "reporte_clases.pdf";
+                break;
+        }
+
+        if (pdf == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nombreArchivo + "\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 
     // --- Gestión de Galería ---
