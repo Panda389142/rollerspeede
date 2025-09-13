@@ -124,16 +124,30 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             
-            <div class="collapse navbar-collapse" id="navbarNav">
+                        <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/}">Inicio</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/sobre-nosotros}">Sobre Nosotros</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="corporativoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Corporativo
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="corporativoDropdown">
+                            <li><a class="dropdown-item" th:href="@{/sobre-nosotros}">Sobre Nosotros</a></li>
+                            <li><a class="dropdown-item" th:href="@{/sobre-nosotros#mision}">Misión</a></li>
+                            <li><a class="dropdown-item" th:href="@{/sobre-nosotros#vision}">Visión</a></li>
+                            <li><a class="dropdown-item" th:href="@{/sobre-nosotros#valores}">Valores</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/servicios}">Servicios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/eventos}">Eventos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/horario}">Horario de Clases</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/galeria}">Galería</a>
@@ -153,10 +167,14 @@
                             <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
                         </a>
                     </li>
-                    <li class="nav-item" sec:authorize="!isAuthenticated()">
-                        <a class="btn btn-primary btn-sm ms-2" th:href="@{/registro}">
-                            <i class="fas fa-user-plus"></i> Registrarse
+                    <li class="nav-item dropdown" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link dropdown-toggle" href="#" id="registroDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-plus"></i> Registro
                         </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="registroDropdown">
+                            <li><a class="dropdown-item" th:href="@{/registro}">Inscripción Estudiante</a></li>
+                            <li><a class="dropdown-item" th:href="@{/registro-instructor}">Inscripción Instructor</a></li>
+                        </ul>
                     </li>
 
                     <!-- Para usuarios autenticados -->

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Registro de Instructor - RollerSpeed</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg">
+                    <div class="card-body p-5">
+                        <h2 class="card-title text-center mb-4">Registro de Instructor</h2>
+                        <p class="text-center text-muted mb-4">¿Interesado en formar parte de nuestro equipo? Completa el formulario.</p>
+                        
+                        <!-- Placeholder: El formulario de registro de instructor irá aquí -->
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> El formulario de registro para instructores está en construcción. Vuelve a intentarlo más tarde.
+                        </div>
+
+                        <div class="mt-4 text-center">
+                            <p>¿Ya tienes una cuenta? <a th:href="@{/login}">Inicia Sesión aquí</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

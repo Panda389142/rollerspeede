@@ -62,7 +62,7 @@ public class PdfService {
             for (Pago pago : pagos) {
                 table.addCell(String.valueOf(pago.getId()));
                 table.addCell(String.valueOf(pago.getMonto()));
-                table.addCell(pago.getFechaPago().toString());
+                table.addCell(pago.getFechaPago() != null ? pago.getFechaPago().toString() : "N/A");
                 table.addCell(pago.getEstado().name());
                 table.addCell(pago.getUsuario().getNombre());
             }

@@ -55,7 +55,7 @@ public class InscripcionService {
             nuevoPago.setFechaGeneracion(LocalDate.now());
             nuevoPago.setEstado(Pago.EstadoPago.PENDIENTE); // El pago se genera como pendiente
             // La fecha de pago se establece al confirmar
-            // nuevoPago.setFechaPago(LocalDateTime.now());
+            nuevoPago.setFechaPago(LocalDateTime.now());
             nuevoPago.setMedioPago(usuario.getMedioPago());
             pagoRepository.save(nuevoPago);
         }

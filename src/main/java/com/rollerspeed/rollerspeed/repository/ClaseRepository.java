@@ -32,4 +32,7 @@ public interface ClaseRepository extends JpaRepository<Clase, Long> {
 
     @Query("SELECT c.id FROM Clase c JOIN c.alumnos a WHERE a.id = :alumnoId")
     Set<Long> findIdClasesByAlumnoId(@Param("alumnoId") Long alumnoId);
+
+    @Query("SELECT DISTINCT c FROM Clase c LEFT JOIN FETCH c.instructor LEFT JOIN FETCH c.alumnos WHERE c.activa = true ORDER BY c.diaSemana, c.horaInicio")
+    List<Clase> findAllActiveWithDetails();
 }

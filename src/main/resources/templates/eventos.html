@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Eventos - RollerSpeed</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container mt-5">
+        <div class="text-center mb-5">
+            <h1>Próximos Eventos</h1>
+            <p class="lead">No te pierdas nuestras próximas competencias, exhibiciones y actividades.</p>
+        </div>
+
+        <!-- Contenedor para los eventos -->
+        <div th:if="${#lists.isEmpty(eventos)}">
+            <div class="alert alert-info text-center" role="alert">
+                <i class="fas fa-info-circle"></i> No hay eventos programados por el momento. ¡Vuelve a consultar pronto!
+            </div>
+        </div>
+
+        <div class="row g-4" th:unless="${#lists.isEmpty(eventos)}">
+            <div class="col-md-6 col-lg-4" th:each="evento : ${eventos}">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title" th:text="${evento.titulo}">Nombre del Evento</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span th:text="${#temporals.format(evento.fechaEvento, 'dd ''de'' MMMM ''de'' yyyy, HH:mm ''h''')}">Fecha del Evento</span>
+                        </h6>
+                        <p class="card-text flex-grow-1" th:text="${evento.descripcion}">
+                            Descripción del evento...
+                        </p>
+                        <a href="#" class="btn btn-primary mt-auto align-self-start">Más Información</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

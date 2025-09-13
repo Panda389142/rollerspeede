@@ -116,7 +116,7 @@ public class MainController {
         return "auth/registro";
     }
 
-    @PostMapping("/registro")
+        @PostMapping("/registro")
     public String procesarRegistro(@Valid @ModelAttribute Usuario usuario,
                                 BindingResult result,
                                 Model model) { // Importante: Cambia RedirectAttributes por Model
@@ -142,6 +142,35 @@ public class MainController {
             return "auth/registro"; // Devuelve la vista directamente con el error
         }
     }
+
+    @GetMapping("/registro-instructor")
+    public String mostrarRegistroInstructor(Model model) {
+        if (!model.containsAttribute("usuario")) {
+            model.addAttribute("usuario", new Usuario());
+        }
+        return "auth/registro-instructor";
+    }
+
+    @PostMapping("/registro-instructor")
+    public String procesarRegistroInstructor(@Valid @ModelAttribute("usuario") Usuario usuario,
+                                             BindingResult result,
+                                             RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.usuario", result);
+            redirectAttributes.addFlashAttribute("usuario", usuario);
+            return "redirect:/registro-instructor";
+        }
+        try {
+            usuarioService.crearInstructor(usuario);
+            redirectAttributes.addFlashAttribute("mensaje", "¡Registro de instructor exitoso! Ya puedes iniciar sesión.");
+            return "redirect:/login";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("usuario", usuario);
+            return "redirect:/registro-instructor";
+        }
+    }
+    // ...
     // ...
 
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'INSTRUCTOR', 'ALUMNO')")
