@@ -345,37 +345,41 @@ public class AdminController {
         return "redirect:/admin/clases";
     }
 
+    // --- Gestión de Reportes ---
     @GetMapping("/reportes")
-    public String listarReportes(Model model) {
+    public String mostrarPaginaReportes() {
         return "admin/reportes";
     }
 
-    @PostMapping("/reportes/generar")
-    public ResponseEntity<byte[]> generarReporte(@RequestParam("tipoReporte") String tipoReporte) {
-        byte[] pdf = null;
-        String nombreArchivo = "reporte.pdf";
+    @GetMapping("/reportes/pdf/usuarios")
+    public ResponseEntity<byte[]> generarReporteUsuarios() {
+        List<Usuario> usuarios = usuarioService.listarTodosLosUsuarios();
+        byte[] pdf = pdfService.generarPdfUsuarios(usuarios);
+        String nombreArchivo = "reporte_usuarios.pdf";
 
-        switch (tipoReporte) {
-            case "usuarios":
-                List<Usuario> usuarios = usuarioService.listarTodosLosUsuarios();
-                pdf = pdfService.generarPdfUsuarios(usuarios);
-                nombreArchivo = "reporte_usuarios.pdf";
-                break;
-            case "pagos":
-                List<Pago> pagos = pagoService.listarTodosLosPagos();
-                pdf = pdfService.generarPdfPagos(pagos);
-                nombreArchivo = "reporte_pagos.pdf";
-                break;
-            case "clases":
-                List<Clase> clases = claseService.listarTodasLasClases();
-                pdf = pdfService.generarPdfClases(clases);
-                nombreArchivo = "reporte_clases.pdf";
-                break;
-        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nombreArchivo + "\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
 
-        if (pdf == null) {
-            return ResponseEntity.badRequest().build();
-        }
+    @GetMapping("/reportes/pdf/pagos")
+    public ResponseEntity<byte[]> generarReportePagos() {
+        List<Pago> pagos = pagoService.listarTodosLosPagos();
+        byte[] pdf = pdfService.generarPdfPagos(pagos);
+        String nombreArchivo = "reporte_pagos.pdf";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nombreArchivo + "\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
+    @GetMapping("/reportes/pdf/clases")
+    public ResponseEntity<byte[]> generarReporteClases() {
+        List<Clase> clases = claseService.listarTodasLasClasesParaAdmin();
+        byte[] pdf = pdfService.generarPdfClases(clases);
+        String nombreArchivo = "reporte_clases.pdf";
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nombreArchivo + "\"")

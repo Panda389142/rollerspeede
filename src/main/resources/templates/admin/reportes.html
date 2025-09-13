@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 <head>
@@ -6,23 +5,50 @@
 </head>
 <body>
 <main layout:fragment="content" class="container mt-4">
-    <div class="card">
-        <div class="card-header">
-            <h2>Generación de Reportes</h2>
-        </div>
-        <div class="card-body">
-            <p>Seleccione el tipo de reporte que desea generar.</p>
-            <form th:action="@{/admin/reportes/generar}" method="post" target="_blank">
-                <div class="form-group">
-                    <label for="tipoReporte">Tipo de Reporte</label>
-                    <select id="tipoReporte" name="tipoReporte" class="form-control" required>
-                        <option value="usuarios">Reporte de Usuarios</option>
-                        <option value="pagos">Reporte de Pagos</option>
-                        <option value="clases">Reporte de Clases</option>
-                    </select>
+    <h1 class="mb-4">Generación de Reportes</h1>
+    <p class="lead mb-5">Seleccione el tipo de reporte que desea generar en formato PDF.</p>
+
+    <div class="row g-4">
+        <!-- Reporte de Usuarios -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center d-flex flex-column">
+                    <div class="display-4 text-primary mb-3">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h5 class="card-title">Reporte de Usuarios</h5>
+                    <p class="card-text flex-grow-1">Genera una lista completa de todos los usuarios registrados en el sistema (alumnos, instructores y administradores).</p>
+                    <a th:href="@{/admin/reportes/pdf/usuarios}" target="_blank" class="btn btn-primary mt-auto">Generar PDF</a>
                 </div>
-                <button type="submit" class="btn btn-primary mt-3">Generar Reporte en PDF</button>
-            </form>
+            </div>
+        </div>
+
+        <!-- Reporte de Pagos -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center d-flex flex-column">
+                    <div class="display-4 text-success mb-3">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <h5 class="card-title">Reporte de Pagos</h5>
+                    <p class="card-text flex-grow-1">Genera un historial completo de todos los pagos registrados, incluyendo su estado (pendiente, completado, etc.).</p>
+                    <a th:href="@{/admin/reportes/pdf/pagos}" target="_blank" class="btn btn-success mt-auto">Generar PDF</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reporte de Clases -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center d-flex flex-column">
+                    <div class="display-4 text-warning mb-3">
+                        <i class="fas fa-chalkboard"></i>
+                    </div>
+                    <h5 class="card-title">Reporte de Clases</h5>
+                    <p class="card-text flex-grow-1">Genera una lista de todas las clases programadas, incluyendo su instructor y horario.</p>
+                    <a th:href="@{/admin/reportes/pdf/clases}" target="_blank" class="btn btn-warning mt-auto">Generar PDF</a>
+                </div>
+            </div>
         </div>
     </div>
 </main>
